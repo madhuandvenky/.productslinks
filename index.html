@@ -72,6 +72,25 @@
       letter-spacing: 0.3px;
       box-shadow: 0 4px 12px rgba(219, 39, 119, 0.25);
     }
+    .trust-bar {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 14px;
+      flex-wrap: wrap;
+      font-size: 0.78rem;
+      color: #475569;
+      font-weight: 600;
+    }
+    .trust-bar span {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: #f1f5f9;
+      padding: 5px 14px;
+      border-radius: 50px;
+      border: 1px solid #e2e8f0;
+    }
 
     /* ── Search ── */
     .search-section {
@@ -345,10 +364,15 @@
   <span class="logo">🎬</span>
   <div class="channel-name">MadhuVenke Moments</div>
   <p class="tagline">
-    Two Souls. One Vibe. Endless Memories 💕
-    <span class="te">రెండు ఆత్మలు. ఒక వైబ్. అంతులేని జ్ఞాపకాలు ✨</span>
+    Products We Personally Use &amp; Trust — Shop Safely With 100% Confidence! 🛡️✨
+    <span class="te">మేము స్వయంగా వాడి నచ్చిన నాణ్యమైన ఉత్పత్తులు — పూర్తి నమ్మకంతో కొనండి! 🤝💖</span>
   </p>
-  <span class="badge">🛍️ Our Recommended Products</span>
+  <span class="badge">🛍️ Verified Recommendations</span>
+  <div class="trust-bar">
+    <span>🔒 100% Genuine Stores</span>
+    <span>🛡️ Personally Tested &amp; Loved</span>
+    <span>🤝 Your Trust, Our Priority</span>
+  </div>
 </header>
 
 <div class="search-section">
@@ -412,9 +436,21 @@ const catLabel = {
   accessory: '🎒 Accessory'
 };
 
+function normalizeCategory(cat) {
+  const c = (cat || '').toLowerCase().trim();
+  if (c.includes('mic')) return 'mic';
+  if (c.includes('stand') || c.includes('tripod')) return 'stand';
+  if (c.includes('light')) return 'light';
+  if (c.includes('cam')) return 'camera';
+  if (c.includes('acc')) return 'accessory';
+  return c || 'accessory';
+}
+
 function esc(s) {
   return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
+
+const defaultImg = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300' viewBox='0 0 300 300'><rect width='300' height='300' fill='%23faf5ff'/><text x='50%25' y='45%25' dominant-baseline='middle' text-anchor='middle' font-size='48'>🛍️</text><text x='50%25' y='65%25' dominant-baseline='middle' text-anchor='middle' font-size='15' fill='%237C3AED' font-family='sans-serif' font-weight='bold'>MadhuVenke Moments</text></svg>";
 
 function render() {
   const grid = document.getElementById('grid');
@@ -450,11 +486,23 @@ function render() {
     return;
   }
 
-  grid.innerHTML = list.map(p => `
+  grid.innerHTML = list.map(p => {
+    const hasLink = p.link && p.link !== '#';
+    const buyBtnHtml = hasLink
+      ? `<a class="buy-btn" href="${esc(p.link)}" target="_blank" rel="noopener">
+           🛒 Buy Now <span class="te">కొనండి</span>
+         </a>`
+      : `<a class="buy-btn" href="javascript:void(0)" onclick="alert('Link will be updated soon!')">
+           🛒 Buy Now <span class="te">కొనండి</span>
+         </a>`;
+
+    const displayImg = (p.img && (p.img.startsWith('http://') || p.img.startsWith('https://'))) ? p.img : defaultImg;
+
+    return `
     <div class="card">
       <div class="card-img-wrap">
-        <img class="card-img" src="${esc(p.img)}" alt="${esc(p.name)}" loading="lazy"
-             onerror="this.src='https://placehold.co/300x300/faf5ff/ccc?text=Product+Image'"/>
+        <img class="card-img" src="${esc(displayImg)}" alt="${esc(p.name)}" loading="lazy"
+             onerror="this.onerror=null; this.src='${defaultImg}';"/>
       </div>
       <div class="card-body">
         <span class="card-cat">${esc(catLabel[p.category] || p.category)}</span>
@@ -462,16 +510,59 @@ function render() {
         ${p.nameTe ? `<div class="card-title-te">${esc(p.nameTe)}</div>` : ''}
         <div class="card-price">${esc(p.price)}</div>
         ${p.desc ? `<p class="card-desc">${esc(p.desc)}</p>` : ''}
-        <a class="buy-btn" href="${esc(p.link)}" target="_blank" rel="noopener">
-          🛒 Buy Now <span class="te">కొనండి</span>
-        </a>
+        ${buyBtnHtml}
       </div>
     </div>
-  `).join('');
+  `;
+  }).join('');
 }
 
-async function loadFromGoogleSheets() {
-  if (GOOGLE_SHEET_ID === "PASTE_YOUR_GOOGLE_SHEET_ID_HERE") {
+window.handleGoogleSheetResponse = function(data) {
+  try {
+    const rows = data && data.table && data.table.rows ? data.table.rows : [];
+    const list = [];
+    for (const r of rows) {
+      if (!r.c) continue;
+      const getVal = (idx) => {
+        if (!r.c[idx]) return '';
+        const cell = r.c[idx];
+        if (cell.f !== undefined && cell.f !== null) return String(cell.f).trim();
+        if (cell.v !== undefined && cell.v !== null) return String(cell.v).trim();
+        return '';
+      };
+      
+      const name = getVal(0);
+      const nameTe = getVal(1);
+      const category = normalizeCategory(getVal(2));
+      let price = getVal(3);
+      if (price && !price.startsWith('₹') && !price.toLowerCase().startsWith('rs') && !price.startsWith('$')) {
+        price = '₹' + price;
+      }
+      const img = getVal(4);
+      const link = getVal(5);
+      const desc = getVal(6);
+
+      // Skip empty or header rows
+      if (!name || name.toLowerCase() === 'name' || name.toLowerCase() === 'product name') continue;
+
+      list.push({ name, nameTe, category, price, img, link, desc });
+    }
+
+    allProducts = list;
+    render();
+  } catch (err) {
+    console.error("Parse error:", err);
+    document.getElementById('grid').innerHTML = `
+      <div class="state-box">
+        <span class="big">⚠️</span>
+        <h3>Could not load products</h3>
+        <p>Please check your Google Sheet format.</p>
+      </div>`;
+  }
+};
+
+function loadFromGoogleSheets() {
+  if (!GOOGLE_SHEET_ID || GOOGLE_SHEET_ID === "PASTE_YOUR_GOOGLE_SHEET_ID_HERE") {
     document.getElementById('grid').innerHTML = `
       <div class="state-box">
         <span class="big">⚙️</span>
@@ -481,47 +572,18 @@ async function loadFromGoogleSheets() {
     return;
   }
 
-  try {
-    const url = `https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/gviz/tq?tqx=out:json`;
-    const res = await fetch(url);
-    const text = await res.text();
-
-    const jsonStr = text.substring(text.indexOf('{'), text.lastIndexOf('}') + 1);
-    const data = JSON.parse(jsonStr);
-    const rows = data.table.rows;
-
-    const list = [];
-    for (const r of rows) {
-      if (!r.c) continue;
-      const getVal = (idx) => (r.c[idx] && r.c[idx].v !== null && r.c[idx].v !== undefined) ? String(r.c[idx].v).trim() : '';
-      
-      const name = getVal(0);
-      const nameTe = getVal(1);
-      const category = getVal(2).toLowerCase();
-      const price = getVal(3);
-      const img = getVal(4);
-      const link = getVal(5);
-      const desc = getVal(6);
-
-      // Skip header row
-      if (name.toLowerCase() === 'name' || name.toLowerCase() === 'product name') continue;
-
-      if (name && link) {
-        list.push({ name, nameTe, category, price, img, link, desc });
-      }
-    }
-
-    allProducts = list;
-    render();
-  } catch (err) {
-    console.error(err);
+  // Load via script tag (JSONP) - completely avoids browser CORS restrictions
+  const script = document.createElement('script');
+  script.src = `https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/gviz/tq?tqx=responseHandler:handleGoogleSheetResponse&t=${Date.now()}`;
+  script.onerror = function() {
     document.getElementById('grid').innerHTML = `
       <div class="state-box">
         <span class="big">⚠️</span>
-        <h3>Could not load products</h3>
+        <h3>Could not connect to Google Sheet</h3>
         <p>Make sure your Google Sheet is shared as "Anyone with the link can view".</p>
       </div>`;
-  }
+  };
+  document.head.appendChild(script);
 }
 
 function doSearch() {
