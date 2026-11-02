@@ -38,15 +38,23 @@
       padding: 32px 20px 24px;
       text-align: center;
     }
-    .logo { font-size: 2.8rem; margin-bottom: 8px; display: inline-block; }
-    .channel-name {
-      font-size: clamp(1.8rem, 5vw, 2.7rem);
-      font-weight: 900;
-      background: var(--grad);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      letter-spacing: -0.5px;
+    .header-logo-wrap {
+      display: inline-block;
+      margin-bottom: 6px;
+      text-decoration: none;
+      transition: transform .2s;
+    }
+    .header-logo-wrap:hover {
+      transform: scale(1.04);
+    }
+    .header-logo {
+      width: 100%;
+      max-width: clamp(280px, 42vw, 440px);
+      height: auto;
+      max-height: 140px;
+      object-fit: contain;
+      display: block;
+      margin: 0 auto;
     }
     .tagline {
       margin-top: 6px;
@@ -353,6 +361,11 @@
     .footer-note a { color: var(--v2); text-decoration: none; font-weight: 600; }
 
     @media (max-width: 480px) {
+      .header-logo {
+        max-width: 280px;
+        max-height: 100px;
+      }
+
       .grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; padding: 0 12px 40px; }
       .search-box button { padding: 12px 18px; font-size: 0.88rem; }
     }
@@ -361,8 +374,9 @@
 <body>
 
 <header>
-  <span class="logo">🎬</span>
-  <div class="channel-name">MadhuVenke Moments</div>
+  <a href="https://www.youtube.com/@MadhuVenkeMoments" target="_blank" rel="noopener" class="header-logo-wrap" title="Visit MadhuVenke Moments on YouTube">
+    <img src="logo.png" alt="MadhuVenke Moments" class="header-logo"/>
+  </a>
   <p class="tagline">
     Products We Personally Use &amp; Trust — Shop Safely With 100% Confidence! 🛡️✨
     <span class="te">మేము స్వయంగా వాడి నచ్చిన నాణ్యమైన ఉత్పత్తులు — పూర్తి నమ్మకంతో కొనండి! 🤝💖</span>
