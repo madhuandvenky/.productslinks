@@ -1,12 +1,14 @@
 """
-MadhuVenke Moments - Automated Deals Poster
-Runs on GitHub Actions (Morning 9:30 AM & Night 7:30 PM IST)
+MadhuVenke Moments - Automated Deals Poster (Prasad Tech Style)
+Runs every hour on GitHub Actions
+Posts top 5 fresh loot deals to @madhuvenkedeals
 """
 
 import os
 import re
 import sys
 import json
+import time
 import html
 import urllib.request
 import urllib.parse
@@ -14,10 +16,7 @@ import urllib.parse
 BOT_TOKEN  = os.environ.get("TELEGRAM_BOT_TOKEN", "").strip()
 CHAT_ID    = os.environ.get("TELEGRAM_CHAT_ID", "@madhuvenkedeals").strip()
 AMAZON_TAG = os.environ.get("AMAZON_TAG", "madhuvenke-21").strip()
-
-if not BOT_TOKEN:
-    print("❌ Error: TELEGRAM_BOT_TOKEN is missing!")
-    sys.exit(1)
+DEAL_COUNT = int(os.environ.get("DEAL_COUNT", "5")) # Top 5 deals every hour
 
 FOOTER = (
     "\n\n━━━━━━━━━━━━━━━━━━━━━━\n"
@@ -26,57 +25,66 @@ FOOTER = (
     "🛍️ Our Recommended Gear: https://madhuvenke.github.io/.productslinks/"
 )
 
-def clean_deal_html(raw_html, amazon_tag):
-    t = html.unescape(raw_html)
-    seen_urls = set()
+def format_prasad_style(raw_text, amazon_tag):
+    t = html.unescape(raw_text)
+
+    # Extract and tag links
+    seen = set()
     links = []
-
-    def extract_link(m):
+    def ext_link(m):
         url = m.group(1).strip().replace("&amp;", "&")
-        anchor_text = re.sub(r'<[^>]+>', '', m.group(2)).strip()
-
-        # Inject user affiliate tag for Amazon links
         if "amazon.in" in url:
             if "tag=" in url:
                 url = re.sub(r'tag=[a-zA-Z0-9_-]+', f'tag={amazon_tag}', url)
             else:
                 url += ("&" if "?" in url else "?") + f"tag={amazon_tag}"
+        if url not in seen and not url.startswith("https://t.me"):
+            seen.add(url)
+            links.append(url)
+        return ""
 
-        if url not in seen_urls:
-            seen_urls.add(url)
-            label = anchor_text if anchor_text else "Buy Link"
-            links.append((label, url))
-        return " "
-
-    # Extract all hyperlinks
-    t = re.sub(r'<a\s+[^>]*href=["\']([^"\']+)["\'][^>]*>([\s\S]*?)</a>', extract_link, t)
-
-    # Clean formatting and watermarks
+    t = re.sub(r'<a\s+[^>]*href=["\']([^"\']+)["\'][^>]*>([\s\S]*?)</a>', ext_link, t)
     t = t.replace("<br/>", "\n").replace("<br>", "\n")
     t = re.sub(r'<[^>]+>', '', t)
     t = re.sub(r'@[a-zA-Z0-9_]+', '', t)
     t = re.sub(r't\.me/[a-zA-Z0-9_]+', '', t)
     t = re.sub(r'Join.*?(?=\n|$)', '', t, flags=re.IGNORECASE)
 
-    # Remove orphan emojis left behind
-    lines = []
-    for line in t.split("\n"):
-        line_clean = line.strip()
-        if line_clean in ["🛒", "👉", "🔥", "⚡", ""]:
-            continue
-        lines.append(line_clean)
+    raw_lines = [l.strip() for l in t.split("\n") if l.strip() and l.strip() not in ["🛒", "👉", "🔥", "⚡"]]
+    if not raw_lines and not links:
+        return None
 
-    body = "\n".join(lines)
+    # Title with fire emojis
+    title = raw_lines[0] if raw_lines else "Special Loot Deal"
+    if not title.startswith("🔥"):
+        title = f"🔥🔥 {title}"
 
-    # Append clean, clickable buy links with your tag
+    # Price / Highlights / Offers
+    other_lines = []
+    for l in raw_lines[1:]:
+        if any(w in l.lower() for w in ["price", "mrp", "deal", "offer", "discount", "lowest", "coupon", "bank", "₹", "rs."]):
+            other_lines.append(l)
+
+    post_parts = [title]
+    if other_lines:
+        post_parts.append("\n" + "\n".join(other_lines))
+
     if links:
-        body += "\n\n" + "\n".join([f"🛒 {label}: {url}" for label, url in links])
+        post_parts.append(f"\n🛒 Buy Here: {links[0]}")
 
-    return body
+    post_parts.append(FOOTER)
+    return "\n".join(post_parts)
 
-def fetch_latest_deal():
-    sources = ["https://t.me/s/deals", "https://t.me/s/lootdeals"]
+def fetch_latest_deals(limit=5):
+    sources = [
+        "https://t.me/s/prasadtech_deals",
+        "https://t.me/s/deals",
+        "https://t.me/s/lootdeals"
+    ]
     headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
+
+    deals = []
+    seen_urls = set()
 
     for source in sources:
         try:
@@ -90,6 +98,7 @@ def fetch_latest_deal():
             )
 
             for block in reversed(msg_blocks):
+                # Product Photo
                 photo_match = re.search(r'class="tgme_widget_message_photo_wrap"[^>]*style="[^"]*background-image:url\(\'([^\']+)\'\)', block)
                 if not photo_match:
                     photo_match = re.search(r'background-image:url\(\'([^\']+)\'\)', block)
@@ -100,6 +109,7 @@ def fetch_latest_deal():
                 if photo_url and photo_url.startswith("//"):
                     photo_url = "https:" + photo_url
 
+                # Message Text
                 text_match = re.search(r'<div class="tgme_widget_message_text[^>]*>([\s\S]*?)</div>', block)
                 if not text_match:
                     continue
@@ -108,17 +118,29 @@ def fetch_latest_deal():
                 if not any(k in raw_text.lower() for k in ["amazon", "amzn", "flipkart", "fkrt", "myntra", "ajio", "http"]):
                     continue
 
-                clean_text = clean_deal_html(raw_text, AMAZON_TAG)
-                final_text = clean_text + FOOTER
+                # Deduplicate by primary link
+                first_link = re.search(r'href=["\']([^"\']+)["\']', raw_text)
+                if first_link:
+                    base_link = first_link.group(1).split("?")[0]
+                    if base_link in seen_urls:
+                        continue
+                    seen_urls.add(base_link)
 
-                return {
+                formatted_text = format_prasad_style(raw_text, AMAZON_TAG)
+                if not formatted_text:
+                    continue
+
+                deals.append({
                     "photo": photo_url,
-                    "text": final_text
-                }
+                    "text": formatted_text
+                })
+
+                if len(deals) >= limit:
+                    return deals
         except Exception as e:
             print(f"Error reading from {source}: {e}")
 
-    return None
+    return deals
 
 def send_to_telegram(deal):
     base_url = f"https://api.telegram.org/bot{BOT_TOKEN}/"
@@ -139,6 +161,8 @@ def send_to_telegram(deal):
                 if res.get("ok"):
                     print("✅ Successfully posted deal with photo to Telegram!")
                     return True
+                else:
+                    print(f"Photo response: {res}")
         except Exception as e:
             print(f"Photo send failed ({e}), falling back to text...")
 
@@ -165,17 +189,26 @@ def send_to_telegram(deal):
         return False
 
 def main():
-    print(f"Fetching latest deal for {CHAT_ID}...")
-    deal = fetch_latest_deal()
-    if not deal:
-        print("No valid deal found.")
+    if not BOT_TOKEN:
+        print("❌ Error: TELEGRAM_BOT_TOKEN is missing!")
+        sys.exit(1)
+
+    print(f"Fetching top {DEAL_COUNT} deals for {CHAT_ID}...")
+    deals = fetch_latest_deals(limit=DEAL_COUNT)
+    if not deals:
+        print("No valid deals found.")
         sys.exit(0)
 
-    print("Posting deal to Telegram channel...")
-    success = send_to_telegram(deal)
-    if success:
-        print("All done!")
-    else:
+    print(f"Found {len(deals)} deals. Posting to Telegram channel...")
+    sent = 0
+    for i, deal in enumerate(deals):
+        ok = send_to_telegram(deal)
+        if ok:
+            sent += 1
+        time.sleep(2.5) # Pause 2.5s between messages
+
+    print(f"Done! Successfully posted {sent}/{len(deals)} deals to {CHAT_ID}.")
+    if sent == 0:
         sys.exit(1)
 
 if __name__ == "__main__":
