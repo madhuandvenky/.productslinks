@@ -1,7 +1,5 @@
 """
-MadhuVenke Moments - Automated Deals Poster (Prasad Tech Style)
-Runs every hour on GitHub Actions
-Posts top 5 fresh loot deals to @madhuvenkedeals
+MadhuVenke Moments - Smart Automated Deals Engine
 """
 
 import os
@@ -16,7 +14,7 @@ import urllib.parse
 BOT_TOKEN  = os.environ.get("TELEGRAM_BOT_TOKEN", "").strip()
 CHAT_ID    = os.environ.get("TELEGRAM_CHAT_ID", "@madhuvenkedeals").strip()
 AMAZON_TAG = os.environ.get("AMAZON_TAG", "madhuvenke-21").strip()
-DEAL_COUNT = int(os.environ.get("DEAL_COUNT", "5")) # Top 5 deals every hour
+MAX_DEALS  = int(os.environ.get("MAX_DEALS", "2")) # Up to 2 new deals per 15-min run
 
 FOOTER = (
     "\n\n━━━━━━━━━━━━━━━━━━━━━━\n"
@@ -25,24 +23,68 @@ FOOTER = (
     "🛍️ Our Recommended Gear: https://madhuvenke.github.io/.productslinks/"
 )
 
+def get_already_posted_keys(channel_handle):
+    """Fetches the latest messages from the public channel to prevent duplicates."""
+    clean_handle = channel_handle.replace("@", "").strip()
+    url = f"https://t.me/s/{clean_handle}"
+    headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
+    posted = set()
+
+    try:
+        req = urllib.request.Request(url, headers=headers)
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            page_html = resp.read().decode("utf-8", errors="ignore")
+
+        # 1. Extract previous product URLs
+        urls = re.findall(r'href=["\'](https?://[^\s"\'<>]+)["\']', page_html)
+        for u in urls:
+            base = u.split("?")[0].replace("https://", "").replace("http://", "").strip().lower()
+            if base and not any(k in base for k in ["madhuvenke", "whatsapp.com", "t.me", "telegram.org"]):
+                posted.add(base)
+
+        # 2. Extract first 30 chars of post titles
+        titles = re.findall(r'<div class="tgme_widget_message_text[^>]*>([\s\S]*?)</div>', page_html)
+        for t in titles:
+            clean = re.sub(r'<[^>]+>', '', t).replace("🔥", "").strip()
+            first_line = clean.split("\n")[0].strip()[:35].lower()
+            if first_line:
+                posted.add(first_line)
+
+    except Exception as e:
+        print(f"Notice: Could not load channel history: {e}")
+
+    return posted
+
+def is_shopping_url(url):
+    u = url.lower()
+    if any(k in u for k in ["t.me", "telegram.org", "whatsapp.com", "instagram.com", "bit.ly"]):
+        return False
+    return any(k in u for k in ["amazon", "amzn", "flipkart", "fkrt", "myntra", "ajio", "croma", "boat-lifestyle", "nykaa", "tatacliq", "jiomart", "meesho"]) or "http" in u
+
 def format_prasad_style(raw_text, amazon_tag):
     t = html.unescape(raw_text)
 
-    # Extract and tag links
     seen = set()
     links = []
+
     def ext_link(m):
         url = m.group(1).strip().replace("&amp;", "&")
+        if not is_shopping_url(url):
+            return ""
+
+        # Inject user affiliate tag for Amazon links
         if "amazon.in" in url:
             if "tag=" in url:
                 url = re.sub(r'tag=[a-zA-Z0-9_-]+', f'tag={amazon_tag}', url)
             else:
                 url += ("&" if "?" in url else "?") + f"tag={amazon_tag}"
-        if url not in seen and not url.startswith("https://t.me"):
+
+        if url not in seen:
             seen.add(url)
             links.append(url)
         return ""
 
+    # Extract shopping links
     t = re.sub(r'<a\s+[^>]*href=["\']([^"\']+)["\'][^>]*>([\s\S]*?)</a>', ext_link, t)
     t = t.replace("<br/>", "\n").replace("<br>", "\n")
     t = re.sub(r'<[^>]+>', '', t)
@@ -54,12 +96,10 @@ def format_prasad_style(raw_text, amazon_tag):
     if not raw_lines and not links:
         return None
 
-    # Title with fire emojis
     title = raw_lines[0] if raw_lines else "Special Loot Deal"
     if not title.startswith("🔥"):
         title = f"🔥🔥 {title}"
 
-    # Price / Highlights / Offers
     other_lines = []
     for l in raw_lines[1:]:
         if any(w in l.lower() for w in ["price", "mrp", "deal", "offer", "discount", "lowest", "coupon", "bank", "₹", "rs."]):
@@ -73,23 +113,23 @@ def format_prasad_style(raw_text, amazon_tag):
         post_parts.append(f"\n🛒 Buy Here: {links[0]}")
 
     post_parts.append(FOOTER)
-    return "\n".join(post_parts)
+    return "\n".join(post_parts), links[0] if links else None
 
-def fetch_latest_deals(limit=5):
+def fetch_fresh_deals(already_posted, limit=2):
     sources = [
-        "https://t.me/s/prasadtech_deals",
         "https://t.me/s/deals",
-        "https://t.me/s/lootdeals"
+        "https://t.me/s/lootdeals",
+        "https://t.me/s/prasadtech_deals"
     ]
     headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
 
     deals = []
-    seen_urls = set()
+    current_run_keys = set()
 
     for source in sources:
         try:
             req = urllib.request.Request(source, headers=headers)
-            with urllib.request.urlopen(req, timeout=15) as resp:
+            with urllib.request.urlopen(req, timeout=12) as resp:
                 page_html = resp.read().decode("utf-8", errors="ignore")
 
             msg_blocks = re.findall(
@@ -98,7 +138,31 @@ def fetch_latest_deals(limit=5):
             )
 
             for block in reversed(msg_blocks):
-                # Product Photo
+                # 1. Check shopping link
+                link_match = re.search(r'href=["\'](https?://[^\s"\'<>]+)["\']', block)
+                if not link_match:
+                    continue
+                raw_url = link_match.group(1)
+                if not is_shopping_url(raw_url):
+                    continue
+
+                base_key = raw_url.split("?")[0].replace("https://", "").replace("http://", "").strip().lower()
+
+                # Deduplication check
+                if base_key in already_posted or base_key in current_run_keys:
+                    continue
+
+                # 2. Extract Message Text
+                text_match = re.search(r'<div class="tgme_widget_message_text[^>]*>([\s\S]*?)</div>', block)
+                if not text_match:
+                    continue
+
+                formatted = format_prasad_style(text_match.group(1), AMAZON_TAG)
+                if not formatted:
+                    continue
+                formatted_text, primary_link = formatted
+
+                # 3. Product Photo Extraction (with Amazon fallback)
                 photo_match = re.search(r'class="tgme_widget_message_photo_wrap"[^>]*style="[^"]*background-image:url\(\'([^\']+)\'\)', block)
                 if not photo_match:
                     photo_match = re.search(r'background-image:url\(\'([^\']+)\'\)', block)
@@ -109,27 +173,13 @@ def fetch_latest_deals(limit=5):
                 if photo_url and photo_url.startswith("//"):
                     photo_url = "https:" + photo_url
 
-                # Message Text
-                text_match = re.search(r'<div class="tgme_widget_message_text[^>]*>([\s\S]*?)</div>', block)
-                if not text_match:
-                    continue
+                # If no photo in feed, but Amazon link, extract Amazon product image
+                if not photo_url and primary_link and "amazon.in" in primary_link:
+                    asin_m = re.search(r'/(?:dp|gp/product)/([A-Z0-9]{10})', primary_link)
+                    if asin_m:
+                        photo_url = f"https://images-eu.ssl-images-amazon.com/images/P/{asin_m.group(1)}.01.LZZZZZZZ.jpg"
 
-                raw_text = text_match.group(1)
-                if not any(k in raw_text.lower() for k in ["amazon", "amzn", "flipkart", "fkrt", "myntra", "ajio", "http"]):
-                    continue
-
-                # Deduplicate by primary link
-                first_link = re.search(r'href=["\']([^"\']+)["\']', raw_text)
-                if first_link:
-                    base_link = first_link.group(1).split("?")[0]
-                    if base_link in seen_urls:
-                        continue
-                    seen_urls.add(base_link)
-
-                formatted_text = format_prasad_style(raw_text, AMAZON_TAG)
-                if not formatted_text:
-                    continue
-
+                current_run_keys.add(base_key)
                 deals.append({
                     "photo": photo_url,
                     "text": formatted_text
@@ -138,7 +188,7 @@ def fetch_latest_deals(limit=5):
                 if len(deals) >= limit:
                     return deals
         except Exception as e:
-            print(f"Error reading from {source}: {e}")
+            print(f"Notice: Reading from {source}: {e}")
 
     return deals
 
@@ -166,7 +216,7 @@ def send_to_telegram(deal):
         except Exception as e:
             print(f"Photo send failed ({e}), falling back to text...")
 
-    # Fallback to text message
+    # Fallback to rich text message
     endpoint = base_url + "sendMessage"
     payload = {
         "chat_id": CHAT_ID,
@@ -193,23 +243,26 @@ def main():
         print("❌ Error: TELEGRAM_BOT_TOKEN is missing!")
         sys.exit(1)
 
-    print(f"Fetching top {DEAL_COUNT} deals for {CHAT_ID}...")
-    deals = fetch_latest_deals(limit=DEAL_COUNT)
-    if not deals:
-        print("No valid deals found.")
+    print(f"Checking for recent posts in {CHAT_ID} to prevent duplicates...")
+    already_posted = get_already_posted_keys(CHAT_ID)
+    print(f"Found {len(already_posted)} recent posts in channel history.")
+
+    print(f"Scanning for NEW flash loot deals...")
+    fresh_deals = fetch_fresh_deals(already_posted, limit=MAX_DEALS)
+
+    if not fresh_deals:
+        print("✅ Channel is up-to-date! No new flash deals dropped in the last 15 minutes.")
         sys.exit(0)
 
-    print(f"Found {len(deals)} deals. Posting to Telegram channel...")
+    print(f"Found {len(fresh_deals)} BRAND NEW deals! Posting to {CHAT_ID}...")
     sent = 0
-    for i, deal in enumerate(deals):
+    for deal in fresh_deals:
         ok = send_to_telegram(deal)
         if ok:
             sent += 1
-        time.sleep(2.5) # Pause 2.5s between messages
+        time.sleep(2.5) # Pause between messages
 
-    print(f"Done! Successfully posted {sent}/{len(deals)} deals to {CHAT_ID}.")
-    if sent == 0:
-        sys.exit(1)
+    print(f"Done! Successfully posted {sent} fresh deals.")
 
 if __name__ == "__main__":
     main()
