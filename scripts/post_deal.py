@@ -10,12 +10,12 @@ import json
 import urllib.request
 import urllib.parse
 
-BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "").strip()
-CHAT_ID   = os.environ.get("TELEGRAM_CHAT_ID", "@madhuvenkedeals").strip()
+BOT_TOKEN  = os.environ.get("TELEGRAM_BOT_TOKEN", "").strip()
+CHAT_ID    = os.environ.get("TELEGRAM_CHAT_ID", "@madhuvenkedeals").strip()
 AMAZON_TAG = os.environ.get("AMAZON_TAG", "").strip()
 
 if not BOT_TOKEN:
-    print("Error: TELEGRAM_BOT_TOKEN is required!")
+    print("❌ Error: TELEGRAM_BOT_TOKEN is missing!")
     sys.exit(1)
 
 FOOTER = (
@@ -35,39 +35,37 @@ def fetch_latest_deal():
             with urllib.request.urlopen(req, timeout=15) as resp:
                 html = resp.read().decode("utf-8", errors="ignore")
 
-            # Find all message elements
             msg_blocks = re.findall(
                 r'<div class="tgme_widget_message_wrap[^>]*>([\s\S]*?)</div>\s*</div>\s*</div>',
                 html
             )
 
             for block in reversed(msg_blocks):
-                # Check for photo
-                photo_match = re.search(r'background-image:url\(\'([^\']+)\'\)', block)
-                photo_url = photo_match.group(1) if photo_match else None
+                photo_match = re.search(r'class="tgme_widget_message_photo_wrap"[^>]*style="[^"]*background-image:url\(\'([^\']+)\'\)', block)
+                if not photo_match:
+                    photo_match = re.search(r'background-image:url\(\'([^\']+)\'\)', block)
 
-                # Check for text
+                photo_url = photo_match.group(1) if photo_match else None
+                if photo_url and ("emoji" in photo_url or "sticker" in photo_url or "avatar" in photo_url):
+                    photo_url = None
+                if photo_url and photo_url.startswith("//"):
+                    photo_url = "https:" + photo_url
+
                 text_match = re.search(r'<div class="tgme_widget_message_text[^>]*>([\s\S]*?)</div>', block)
                 if not text_match:
                     continue
 
                 raw_text = text_match.group(1)
-
-                # Ensure it has a shopping link
                 if not any(k in raw_text.lower() for k in ["amazon", "amzn", "flipkart", "fkrt", "myntra", "ajio", "http"]):
                     continue
 
-                # Clean HTML tags to readable text
                 clean_text = raw_text.replace("<br/>", "\n").replace("<br>", "\n")
                 clean_text = re.sub(r'<a href="([^"]+)"[^>]*>([^<]*)</a>', r'\1', clean_text)
                 clean_text = re.sub(r'<[^>]+>', ' ', clean_text).strip()
-
-                # Clean other channels' watermark/mentions
                 clean_text = re.sub(r'@[a-zA-Z0-9_]+', '', clean_text)
                 clean_text = re.sub(r't\.me/[a-zA-Z0-9_]+', '', clean_text)
                 clean_text = re.sub(r'Join.*?(?=\n|$)', '', clean_text, flags=re.IGNORECASE).strip()
 
-                # If Amazon tag provided, append tag
                 if AMAZON_TAG:
                     clean_text = re.sub(
                         r'(https?://(?:www\.)?amazon\.in/[^\s]+)',
@@ -89,20 +87,33 @@ def fetch_latest_deal():
 def send_to_telegram(deal):
     base_url = f"https://api.telegram.org/bot{BOT_TOKEN}/"
 
+    # Send with photo if available
     if deal.get("photo"):
-        endpoint = base_url + "sendPhoto"
-        payload = {
-            "chat_id": CHAT_ID,
-            "photo": deal["photo"],
-            "caption": deal["text"][:1024]
-        }
-    else:
-        endpoint = base_url + "sendMessage"
-        payload = {
-            "chat_id": CHAT_ID,
-            "text": deal["text"][:4096]
-        }
+        try:
+            endpoint = base_url + "sendPhoto"
+            payload = {
+                "chat_id": CHAT_ID,
+                "photo": deal["photo"],
+                "caption": deal["text"][:1024]
+            }
+            data = json.dumps(payload).encode("utf-8")
+            req = urllib.request.Request(endpoint, data=data, headers={"Content-Type": "application/json"})
+            with urllib.request.urlopen(req, timeout=15) as resp:
+                res = json.loads(resp.read().decode("utf-8"))
+                if res.get("ok"):
+                    print("✅ Successfully posted deal with photo to Telegram!")
+                    return True
+                else:
+                    print(f"Photo response: {res}")
+        except Exception as e:
+            print(f"Photo failed ({e}), falling back to text...")
 
+    # Fallback to plain text message
+    endpoint = base_url + "sendMessage"
+    payload = {
+        "chat_id": CHAT_ID,
+        "text": deal["text"][:4096]
+    }
     data = json.dumps(payload).encode("utf-8")
     req = urllib.request.Request(endpoint, data=data, headers={"Content-Type": "application/json"})
 
@@ -110,20 +121,20 @@ def send_to_telegram(deal):
         with urllib.request.urlopen(req, timeout=15) as resp:
             res = json.loads(resp.read().decode("utf-8"))
             if res.get("ok"):
-                print("Successfully posted deal to Telegram!")
+                print("✅ Successfully posted deal to Telegram!")
                 return True
             else:
-                print(f"Telegram API response: {res}")
+                print(f"❌ Telegram API response: {res}")
                 return False
     except Exception as e:
-        print(f"Error sending message to Telegram: {e}")
+        print(f"❌ Error sending message to Telegram: {e}")
         return False
 
 def main():
     print(f"Fetching latest deal for {CHAT_ID}...")
     deal = fetch_latest_deal()
     if not deal:
-        print("No valid deal found in current feeds.")
+        print("No valid deal found.")
         sys.exit(0)
 
     print("Posting deal to Telegram channel...")
