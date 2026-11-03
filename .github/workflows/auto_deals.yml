@@ -2,10 +2,9 @@ name: Auto Post Deals to Telegram
 
 on:
   schedule:
-    # 4:00 AM UTC = 9:30 AM IST (Morning Deal)
-    # 2:00 PM UTC = 7:30 PM IST (Evening Deal)
-    - cron: '0 4,14 * * *'
-  workflow_dispatch: # Allows manual trigger from GitHub anytime
+    # Runs every hour at minute 0 (24x7 automated deal drops)
+    - cron: '0 * * * *'
+  workflow_dispatch: # Allows manual trigger anytime
 
 jobs:
   post-deal:
@@ -23,4 +22,6 @@ jobs:
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: '@madhuvenkedeals'
+          AMAZON_TAG: 'madhuvenke-21'
+          DEAL_COUNT: '5'
         run: python scripts/post_deal.py
