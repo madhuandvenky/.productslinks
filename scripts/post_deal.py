@@ -7,12 +7,13 @@ import os
 import re
 import sys
 import json
+import html
 import urllib.request
 import urllib.parse
 
 BOT_TOKEN  = os.environ.get("TELEGRAM_BOT_TOKEN", "").strip()
 CHAT_ID    = os.environ.get("TELEGRAM_CHAT_ID", "@madhuvenkedeals").strip()
-AMAZON_TAG = os.environ.get("AMAZON_TAG", "").strip()
+AMAZON_TAG = os.environ.get("AMAZON_TAG", "madhuvenke-21").strip()
 
 if not BOT_TOKEN:
     print("❌ Error: TELEGRAM_BOT_TOKEN is missing!")
@@ -25,6 +26,54 @@ FOOTER = (
     "🛍️ Our Recommended Gear: https://madhuvenke.github.io/.productslinks/"
 )
 
+def clean_deal_html(raw_html, amazon_tag):
+    t = html.unescape(raw_html)
+    seen_urls = set()
+    links = []
+
+    def extract_link(m):
+        url = m.group(1).strip().replace("&amp;", "&")
+        anchor_text = re.sub(r'<[^>]+>', '', m.group(2)).strip()
+
+        # Inject user affiliate tag for Amazon links
+        if "amazon.in" in url:
+            if "tag=" in url:
+                url = re.sub(r'tag=[a-zA-Z0-9_-]+', f'tag={amazon_tag}', url)
+            else:
+                url += ("&" if "?" in url else "?") + f"tag={amazon_tag}"
+
+        if url not in seen_urls:
+            seen_urls.add(url)
+            label = anchor_text if anchor_text else "Buy Link"
+            links.append((label, url))
+        return " "
+
+    # Extract all hyperlinks
+    t = re.sub(r'<a\s+[^>]*href=["\']([^"\']+)["\'][^>]*>([\s\S]*?)</a>', extract_link, t)
+
+    # Clean formatting and watermarks
+    t = t.replace("<br/>", "\n").replace("<br>", "\n")
+    t = re.sub(r'<[^>]+>', '', t)
+    t = re.sub(r'@[a-zA-Z0-9_]+', '', t)
+    t = re.sub(r't\.me/[a-zA-Z0-9_]+', '', t)
+    t = re.sub(r'Join.*?(?=\n|$)', '', t, flags=re.IGNORECASE)
+
+    # Remove orphan emojis left behind
+    lines = []
+    for line in t.split("\n"):
+        line_clean = line.strip()
+        if line_clean in ["🛒", "👉", "🔥", "⚡", ""]:
+            continue
+        lines.append(line_clean)
+
+    body = "\n".join(lines)
+
+    # Append clean, clickable buy links with your tag
+    if links:
+        body += "\n\n" + "\n".join([f"🛒 {label}: {url}" for label, url in links])
+
+    return body
+
 def fetch_latest_deal():
     sources = ["https://t.me/s/deals", "https://t.me/s/lootdeals"]
     headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
@@ -33,11 +82,11 @@ def fetch_latest_deal():
         try:
             req = urllib.request.Request(source, headers=headers)
             with urllib.request.urlopen(req, timeout=15) as resp:
-                html = resp.read().decode("utf-8", errors="ignore")
+                page_html = resp.read().decode("utf-8", errors="ignore")
 
             msg_blocks = re.findall(
                 r'<div class="tgme_widget_message_wrap[^>]*>([\s\S]*?)</div>\s*</div>\s*</div>',
-                html
+                page_html
             )
 
             for block in reversed(msg_blocks):
@@ -59,20 +108,7 @@ def fetch_latest_deal():
                 if not any(k in raw_text.lower() for k in ["amazon", "amzn", "flipkart", "fkrt", "myntra", "ajio", "http"]):
                     continue
 
-                clean_text = raw_text.replace("<br/>", "\n").replace("<br>", "\n")
-                clean_text = re.sub(r'<a href="([^"]+)"[^>]*>([^<]*)</a>', r'\1', clean_text)
-                clean_text = re.sub(r'<[^>]+>', ' ', clean_text).strip()
-                clean_text = re.sub(r'@[a-zA-Z0-9_]+', '', clean_text)
-                clean_text = re.sub(r't\.me/[a-zA-Z0-9_]+', '', clean_text)
-                clean_text = re.sub(r'Join.*?(?=\n|$)', '', clean_text, flags=re.IGNORECASE).strip()
-
-                if AMAZON_TAG:
-                    clean_text = re.sub(
-                        r'(https?://(?:www\.)?amazon\.in/[^\s]+)',
-                        lambda m: m.group(1) + ("&tag=" if "?" in m.group(1) else "?tag=") + AMAZON_TAG,
-                        clean_text
-                    )
-
+                clean_text = clean_deal_html(raw_text, AMAZON_TAG)
                 final_text = clean_text + FOOTER
 
                 return {
@@ -103,12 +139,10 @@ def send_to_telegram(deal):
                 if res.get("ok"):
                     print("✅ Successfully posted deal with photo to Telegram!")
                     return True
-                else:
-                    print(f"Photo response: {res}")
         except Exception as e:
-            print(f"Photo failed ({e}), falling back to text...")
+            print(f"Photo send failed ({e}), falling back to text...")
 
-    # Fallback to plain text message
+    # Fallback to text message
     endpoint = base_url + "sendMessage"
     payload = {
         "chat_id": CHAT_ID,
