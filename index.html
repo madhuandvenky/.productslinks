@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>MadhuVenke Moments – Recommended Products</title>
-  <meta name="description" content="Official recommended products and gear by MadhuVenke Moments YouTube channel."/>
+  <title>MadhuVenke Moments – Recommended Products & Gear</title>
+  <meta name="description" content="Official recommended products and gear by MadhuVenke Moments YouTube channel. Personally tested products with genuine reviews and best buy links."/>
+  
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -18,6 +19,18 @@
       --text: #0f172a;
       --muted: #64748b;
       --radius: 16px;
+      
+      /* Store Colors */
+      --amazon: linear-gradient(135deg, #FF9900 0%, #E67A00 100%);
+      --amazon-shadow: rgba(230, 122, 0, 0.35);
+      --flipkart: linear-gradient(135deg, #2874F0 0%, #0d52c7 100%);
+      --flipkart-shadow: rgba(40, 116, 240, 0.35);
+      --meesho: linear-gradient(135deg, #F43397 0%, #d61879 100%);
+      --meesho-shadow: rgba(244, 51, 151, 0.35);
+      --myntra: linear-gradient(135deg, #FF3F6C 0%, #d91c49 100%);
+      --myntra-shadow: rgba(255, 63, 108, 0.35);
+      --deal: linear-gradient(135deg, #10B981 0%, #059669 100%);
+      --deal-shadow: rgba(16, 185, 129, 0.35);
     }
 
     body {
@@ -29,13 +42,59 @@
       flex-direction: column;
     }
 
+    /* ── Top Floating Language & Notice Bar ── */
+    .top-utility-bar {
+      background: #0f172a;
+      color: #fff;
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      font-size: 0.82rem;
+    }
+    .top-left-msg {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 500;
+    }
+    .lang-toggle-wrap {
+      display: inline-flex;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 50px;
+      padding: 2px;
+      margin-left: auto;
+    }
+    .lang-btn {
+      background: transparent;
+      border: none;
+      color: #cbd5e1;
+      padding: 5px 14px;
+      border-radius: 50px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .lang-btn:hover {
+      color: #fff;
+    }
+    .lang-btn.active {
+      background: var(--grad);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(219, 39, 119, 0.4);
+    }
+
     /* ── Header ── */
     header {
       background: #ffffff;
       border-bottom: 3px solid transparent;
       border-image: var(--grad) 1;
       box-shadow: 0 4px 20px rgba(124, 58, 237, 0.06);
-      padding: 32px 20px 24px;
+      padding: 28px 20px 22px;
       text-align: center;
     }
     .header-logo-wrap {
@@ -45,28 +104,26 @@
       transition: transform .2s;
     }
     .header-logo-wrap:hover {
-      transform: scale(1.04);
+      transform: scale(1.03);
     }
     .header-logo {
       width: 100%;
-      max-width: clamp(280px, 42vw, 440px);
+      max-width: clamp(260px, 40vw, 420px);
       height: auto;
-      max-height: 140px;
+      max-height: 130px;
       object-fit: contain;
       display: block;
       margin: 0 auto;
     }
     .tagline {
-      margin-top: 6px;
+      margin-top: 8px;
       font-size: 0.95rem;
       color: var(--muted);
-      font-weight: 500;
-    }
-    .tagline .te {
-      display: block;
-      margin-top: 3px;
-      font-size: 0.84rem;
-      color: #94a3b8;
+      font-weight: 600;
+      max-width: 680px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.5;
     }
     .badge {
       display: inline-block;
@@ -100,280 +157,10 @@
       border: 1px solid #e2e8f0;
     }
 
-    /* ── Search ── */
-    .search-section {
-      padding: 28px 16px 8px;
-      text-align: center;
-    }
-    .search-box {
-      display: inline-flex;
-      width: 100%;
-      max-width: 580px;
-      background: #fff;
-      border: 2px solid var(--border);
-      border-radius: 50px;
-      box-shadow: 0 4px 20px rgba(124, 58, 237, 0.08);
-      overflow: hidden;
-      transition: border-color .25s, box-shadow .25s;
-    }
-    .search-box:focus-within {
-      border-color: var(--v1);
-      box-shadow: 0 4px 24px rgba(124, 58, 237, 0.18);
-    }
-    .search-box input {
-      flex: 1;
-      padding: 14px 22px;
-      border: none;
-      outline: none;
-      font-size: 1rem;
-      background: transparent;
-      color: var(--text);
-    }
-    .search-box input::placeholder { color: #94a3b8; }
-    .search-box button {
-      padding: 14px 26px;
-      background: var(--grad);
-      color: #fff;
-      font-size: 0.95rem;
-      font-weight: 700;
-      border: none;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: opacity .2s;
-    }
-    .search-box button:hover { opacity: 0.9; }
-
-    /* ── Filters ── */
-    .filter-row {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 10px;
-      padding: 16px 16px 28px;
-    }
-    .filter-btn {
-      padding: 8px 20px;
-      border-radius: 50px;
-      border: 2px solid var(--border);
-      background: #fff;
-      color: var(--muted);
-      font-size: 0.85rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all .2s;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.03);
-    }
-    .filter-btn:hover {
-      border-color: var(--v1);
-      color: var(--v1);
-    }
-    .filter-btn.active {
-      background: var(--grad);
-      border-color: transparent;
-      color: #fff;
-      box-shadow: 0 4px 14px rgba(124, 58, 237, 0.3);
-    }
-
-    /* ── Grid ── */
-    main { flex: 1; }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-      gap: 22px;
-      padding: 0 20px 60px;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-
-    /* ── Card ── */
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.04);
-      transition: transform .2s, box-shadow .2s;
-    }
-    .card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 12px 30px rgba(124, 58, 237, 0.12);
-    }
-    .card-img-wrap {
-      width: 100%;
-      aspect-ratio: 1/1;
-      background: linear-gradient(135deg, #faf5ff 0%, #fdf2f8 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      padding: 18px;
-    }
-    .card-img {
-      max-width: 100%;
-      max-height: 100%;
-      object-fit: contain;
-      transition: transform .3s;
-    }
-    .card:hover .card-img { transform: scale(1.06); }
-    .card-body {
-      padding: 16px 18px 20px;
-      display: flex;
-      flex-direction: column;
-      flex: 1;
-      gap: 8px;
-    }
-    .card-cat {
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 1.2px;
-      font-weight: 800;
-      background: var(--grad);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    .card-title {
-      font-size: 1rem;
-      font-weight: 700;
-      line-height: 1.4;
-      color: var(--text);
-    }
-    .card-title-te {
-      font-size: 0.82rem;
-      color: var(--muted);
-      line-height: 1.4;
-    }
-    .card-price {
-      font-size: 1.2rem;
-      font-weight: 800;
-      color: var(--v1);
-      margin: 2px 0;
-    }
-    .card-desc {
-      font-size: 0.82rem;
-      color: var(--muted);
-      line-height: 1.5;
-      flex: 1;
-    }
-    .buy-btn {
-      display: block;
-      text-align: center;
-      padding: 12px 0;
-      background: var(--grad);
-      color: #fff;
-      font-weight: 700;
-      font-size: 0.95rem;
-      border-radius: 10px;
-      text-decoration: none;
-      margin-top: 10px;
-      box-shadow: 0 4px 12px rgba(124, 58, 237, 0.25);
-      transition: opacity .2s, transform .1s;
-    }
-    .buy-btn:hover { opacity: 0.9; }
-    .buy-btn:active { transform: scale(0.98); }
-    .buy-btn .te {
-      font-weight: 400;
-      font-size: 0.78rem;
-      display: block;
-      margin-top: 2px;
-      opacity: 0.9;
-    }
-
-    /* ── Empty / Loading ── */
-    .state-box {
-      text-align: center;
-      color: var(--muted);
-      padding: 70px 20px;
-      grid-column: 1 / -1;
-    }
-    .state-box .big { font-size: 3.2rem; display: block; margin-bottom: 12px; }
-    .state-box h3 { font-size: 1.25rem; color: var(--text); margin-bottom: 6px; }
-    .spinner {
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      border: 4px solid #e2e8f0;
-      border-top-color: var(--v1);
-      animation: spin .8s linear infinite;
-      margin: 0 auto 16px;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* ── Footer ── */
-    footer {
-      background: #fff;
-      border-top: 2px solid var(--border);
-      padding: 38px 20px 26px;
-      text-align: center;
-      margin-top: auto;
-    }
-    .footer-brand {
-      font-size: 1.15rem;
-      font-weight: 900;
-      background: var(--grad);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      margin-bottom: 6px;
-    }
-    .divider {
-      width: 50px;
-      height: 3px;
-      background: var(--grad);
-      border-radius: 2px;
-      margin: 10px auto 18px;
-    }
-    .social-row {
-      display: flex;
-      justify-content: center;
-      gap: 12px;
-      flex-wrap: wrap;
-      margin: 14px 0 20px;
-    }
-    .soc {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      padding: 10px 22px;
-      border-radius: 50px;
-      font-size: 0.88rem;
-      font-weight: 700;
-      text-decoration: none;
-      color: #fff;
-      box-shadow: 0 3px 12px rgba(0,0,0,0.12);
-      transition: transform .2s, box-shadow .2s;
-    }
-    .soc:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 18px rgba(0,0,0,0.16);
-    }
-    .soc.yt { background: #ff0000; }
-    .soc.ig { background: linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
-    .soc.fb { background: #1877f2; }
-    .footer-note {
-      font-size: 0.8rem;
-      color: #94a3b8;
-      line-height: 1.8;
-      margin-top: 10px;
-    }
-    .footer-note a { color: var(--v2); text-decoration: none; font-weight: 600; }
-
-    @media (max-width: 480px) {
-      .header-logo {
-        max-width: 280px;
-        max-height: 100px;
-      }
-
-      .grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; padding: 0 12px 40px; }
-      .search-box button { padding: 12px 18px; font-size: 0.88rem; }
-    }
-  
-    /* ── Live Deals Hub (Telegram + WhatsApp) ── */
+    /* ── Live Deals Hub ── */
     .deals-hub-wrap {
       max-width: 820px;
-      margin: 20px auto 8px;
+      margin: 18px auto 4px;
       padding: 0 16px;
       text-align: center;
     }
@@ -470,120 +257,460 @@
     .deal-card-btn.tg .deal-pill { color: #0088cc; }
     .deal-card-btn.wa .deal-pill { color: #128C7E; }
 
+    /* ── Search ── */
+    .search-section {
+      padding: 24px 16px 8px;
+      text-align: center;
+    }
+    .search-box {
+      display: inline-flex;
+      width: 100%;
+      max-width: 580px;
+      background: #fff;
+      border: 2px solid var(--border);
+      border-radius: 50px;
+      box-shadow: 0 4px 20px rgba(124, 58, 237, 0.08);
+      overflow: hidden;
+      transition: border-color .25s, box-shadow .25s;
+    }
+    .search-box:focus-within {
+      border-color: var(--v1);
+      box-shadow: 0 4px 24px rgba(124, 58, 237, 0.18);
+    }
+    .search-box input {
+      flex: 1;
+      padding: 14px 22px;
+      border: none;
+      outline: none;
+      font-size: 1rem;
+      background: transparent;
+      color: var(--text);
+    }
+    .search-box input::placeholder { color: #94a3b8; }
+    .search-box button {
+      padding: 14px 26px;
+      background: var(--grad);
+      color: #fff;
+      font-size: 0.95rem;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: opacity .2s;
+    }
+    .search-box button:hover { opacity: 0.9; }
+
+    /* ── Category Filters ── */
+    .filter-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      padding: 14px 16px 26px;
+    }
+    .filter-btn {
+      padding: 8px 20px;
+      border-radius: 50px;
+      border: 2px solid var(--border);
+      background: #fff;
+      color: var(--muted);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .2s;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+    }
+    .filter-btn:hover {
+      border-color: var(--v1);
+      color: var(--v1);
+    }
+    .filter-btn.active {
+      background: var(--grad);
+      border-color: transparent;
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(124, 58, 237, 0.3);
+    }
+
+    /* ── Product Grid ── */
+    main { flex: 1; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 22px;
+      padding: 0 20px 60px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* ── Card ── */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.04);
+      transition: transform .2s, box-shadow .2s;
+      position: relative;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 30px rgba(124, 58, 237, 0.12);
+    }
+    .store-badge-top {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      z-index: 2;
+      padding: 4px 10px;
+      border-radius: 50px;
+      font-size: 0.68rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      background: rgba(255,255,255,0.94);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+      border: 1px solid rgba(0,0,0,0.06);
+    }
+    .card-img-wrap {
+      width: 100%;
+      aspect-ratio: 1/1;
+      background: linear-gradient(135deg, #faf5ff 0%, #fdf2f8 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      padding: 18px;
+      position: relative;
+    }
+    .card-img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      transition: transform .3s;
+    }
+    .card:hover .card-img { transform: scale(1.06); }
+    .card-body {
+      padding: 16px 18px 20px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      gap: 8px;
+    }
+    .card-cat {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      font-weight: 800;
+      background: var(--grad);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .card-title {
+      font-size: 1.02rem;
+      font-weight: 700;
+      line-height: 1.4;
+      color: var(--text);
+    }
+    .card-price {
+      font-size: 1.25rem;
+      font-weight: 900;
+      color: var(--v1);
+      margin: 2px 0;
+    }
+
     /* ── Benefits We Found Box ── */
     .card-benefits {
       background: #f8fafc;
       border: 1px solid #e2e8f0;
-      border-left: 3px solid #7C3AED;
-      border-radius: 8px;
+      border-left: 3.5px solid var(--v1);
+      border-radius: 10px;
       padding: 10px 12px;
       margin-top: 4px;
       flex: 1;
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 5px;
     }
-    .benefits-label {
+    .benefits-header {
       display: flex;
       align-items: center;
+      justify-content: space-between;
       gap: 6px;
       font-size: 0.76rem;
       font-weight: 800;
-      color: #7C3AED;
+      color: var(--v1);
       flex-wrap: wrap;
     }
-    .benefits-label .te {
-      color: #94a3b8;
-      font-weight: 600;
-      font-size: 0.72rem;
+    .benefits-badge-verified {
+      font-size: 0.68rem;
+      background: rgba(124, 58, 237, 0.1);
+      color: var(--v1);
+      padding: 2px 8px;
+      border-radius: 50px;
+      font-weight: 700;
     }
-    .benefits-text {
+    .benefits-content {
       font-size: 0.82rem;
-      color: #475569;
+      color: #334155;
       line-height: 1.5;
     }
+    .benefits-bullets {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .benefits-bullets li {
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+      font-size: 0.8rem;
+      color: #334155;
+      line-height: 1.4;
+    }
+    .benefits-bullets li span.bullet-icon {
+      color: #10B981;
+      font-weight: bold;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
 
+    /* ── Smart Store Buy Buttons ── */
+    .buy-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-align: center;
+      padding: 13px 16px;
+      color: #fff;
+      font-weight: 800;
+      font-size: 0.95rem;
+      border-radius: 12px;
+      text-decoration: none;
+      margin-top: 10px;
+      transition: transform .15s, box-shadow .2s, opacity .2s;
+      cursor: pointer;
+    }
+    .buy-btn:hover {
+      opacity: 0.95;
+      transform: translateY(-2px);
+    }
+    .buy-btn:active {
+      transform: scale(0.98);
+    }
+
+    /* Store Specific Styles */
+    .buy-btn.store-amazon {
+      background: var(--amazon);
+      box-shadow: 0 4px 14px var(--amazon-shadow);
+      color: #111;
+    }
+    .buy-btn.store-flipkart {
+      background: var(--flipkart);
+      box-shadow: 0 4px 14px var(--flipkart-shadow);
+    }
+    .buy-btn.store-meesho {
+      background: var(--meesho);
+      box-shadow: 0 4px 14px var(--meesho-shadow);
+    }
+    .buy-btn.store-myntra {
+      background: var(--myntra);
+      box-shadow: 0 4px 14px var(--myntra-shadow);
+    }
+    .buy-btn.store-deal {
+      background: var(--deal);
+      box-shadow: 0 4px 14px var(--deal-shadow);
+    }
+    .buy-btn.store-default {
+      background: var(--grad);
+      box-shadow: 0 4px 14px rgba(124, 58, 237, 0.3);
+    }
+
+    /* ── Empty / Loading ── */
+    .state-box {
+      text-align: center;
+      color: var(--muted);
+      padding: 70px 20px;
+      grid-column: 1 / -1;
+    }
+    .state-box .big { font-size: 3.2rem; display: block; margin-bottom: 12px; }
+    .state-box h3 { font-size: 1.25rem; color: var(--text); margin-bottom: 6px; }
+    .spinner {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 4px solid #e2e8f0;
+      border-top-color: var(--v1);
+      animation: spin .8s linear infinite;
+      margin: 0 auto 16px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Footer ── */
+    footer {
+      background: #fff;
+      border-top: 2px solid var(--border);
+      padding: 38px 20px 26px;
+      text-align: center;
+      margin-top: auto;
+    }
+    .footer-brand {
+      font-size: 1.25rem;
+      font-weight: 900;
+      background: var(--grad);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 6px;
+    }
+    .divider {
+      width: 50px;
+      height: 3px;
+      background: var(--grad);
+      border-radius: 2px;
+      margin: 10px auto 18px;
+    }
+    .social-row {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin: 14px 0 20px;
+    }
+    .soc {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 10px 22px;
+      border-radius: 50px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      text-decoration: none;
+      color: #fff;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.12);
+      transition: transform .2s, box-shadow .2s;
+    }
+    .soc:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.16);
+    }
+    .soc.yt { background: #ff0000; }
+    .soc.ig { background: linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
+    .soc.fb { background: #1877f2; }
     .soc.tg { background: #229ED9; }
     .soc.wa { background: #25D366; }
 
-    @media (max-width: 640px) {
-      .deals-grid { grid-template-columns: 1fr; gap: 10px; }
+    .footer-note {
+      font-size: 0.82rem;
+      color: #94a3b8;
+      line-height: 1.8;
+      margin-top: 10px;
+    }
+    .footer-note a { color: var(--v2); text-decoration: none; font-weight: 600; }
+
+    /* Protect Brand, Model & Prices from Chrome Translation Mangling */
+    .notranslate, [translate="no"] {
+      -webkit-user-modify: read-only;
     }
 
+    @media (max-width: 640px) {
+      .deals-grid { grid-template-columns: 1fr; gap: 10px; }
+      .grid { grid-template-columns: 1fr; gap: 18px; padding: 0 16px 40px; }
+      .header-logo { max-width: 270px; max-height: 95px; }
+      .top-utility-bar { justify-content: center; text-align: center; }
+      .lang-toggle-wrap { margin-left: 0; }
+    }
   </style>
 </head>
 <body>
 
+<!-- Top Bar with One-Click English / Telugu Language Switcher -->
+<div class="top-utility-bar">
+  <div class="top-left-msg" id="topMsg">
+    <span>✨ Official Community Store — 100% Genuine Affiliate Deals</span>
+  </div>
+  <div class="lang-toggle-wrap">
+    <button class="lang-btn" id="btnEn" onclick="switchLang('en')">🇬🇧 English</button>
+    <button class="lang-btn active" id="btnTe" onclick="switchLang('te')">🇮🇳 తెలుగు</button>
+  </div>
+</div>
+
 <header>
   <a href="https://www.youtube.com/@MadhuVenkeMoments" target="_blank" rel="noopener" class="header-logo-wrap" title="Visit MadhuVenke Moments on YouTube">
-    <img src="logo.png" alt="MadhuVenke Moments" class="header-logo"/>
+    <img src="logo.png" alt="MadhuVenke Moments" class="header-logo notranslate" translate="no"/>
   </a>
-  <p class="tagline">
-    Products We Personally Use &amp; Trust — Shop Safely With 100% Confidence! 🛡️✨
-    <span class="te">మేము స్వయంగా వాడి నచ్చిన నాణ్యమైన ఉత్పత్తులు — పూర్తి నమ్మకంతో కొనండి! 🤝💖</span>
+  <p class="tagline" id="headerTagline">
+    మేము స్వయంగా వాడి నచ్చిన నాణ్యమైన ఉత్పత్తులు — పూర్తి నమ్మకంతో కొనండి! 🛡️✨
   </p>
-  <span class="badge">🛍️ Verified Recommendations</span>
+  <span class="badge" id="verifiedBadge">🛍️ వెరిఫైడ్ రికమండేషన్స్</span>
   <div class="trust-bar">
-    <span>🔒 100% Genuine Stores</span>
-    <span>🛡️ Personally Tested &amp; Loved</span>
-    <span>🤝 Your Trust, Our Priority</span>
+    <span id="trust1">🔒 100% అసలైన స్టోర్స్</span>
+    <span id="trust2">🛡️ స్వయంగా పరీక్షించి నచ్చినవి</span>
+    <span id="trust3">🤝 మీ నమ్మకమే మా ప్రాధాన్యత</span>
   </div>
 </header>
 
 <div class="deals-hub-wrap">
   <div class="live-alert-bar">
     <span class="live-dot"></span>
-    <span>⚡ DAILY 50%–80% OFF LOOT DEALS &amp; OFFERS</span>
+    <span id="dealsAlert">⚡ ప్రతిరోజూ 50%–80% తగ్గింపు లూట్ డీల్స్ &amp; ఆఫర్స్</span>
   </div>
   <div class="deals-grid">
     <a href="https://t.me/madhuvenkedeals" target="_blank" rel="noopener" class="deal-card-btn tg">
       <div class="deal-icon">✈️</div>
       <div class="deal-text">
         <strong>MadhuVenke Deals on Telegram 🔥</strong>
-        <span>Flash sales, price drops &amp; daily loots</span>
+        <span id="tgSub">ఫ్లాష్ సేల్స్, ప్రైస్ డ్రాప్స్ &amp; లూట్స్</span>
       </div>
-      <span class="deal-pill">Join Free ➔</span>
+      <span class="deal-pill" id="tgBtn">చేరండి ➔</span>
     </a>
     <a href="https://whatsapp.com/channel/0029Vb9EERsHFxOsnGsEI71r" target="_blank" rel="noopener" class="deal-card-btn wa">
       <div class="deal-icon">💬</div>
       <div class="deal-text">
         <strong>MadhuVenke WhatsApp Channel ⚡</strong>
-        <span>Top curated deals on your WhatsApp</span>
+        <span id="waSub">మీ వాట్సాప్‌లోనే బెస్ట్ ఆఫర్స్</span>
       </div>
-      <span class="deal-pill">Join Free ➔</span>
+      <span class="deal-pill" id="waBtn">చేరండి ➔</span>
     </a>
   </div>
 </div>
 
 <div class="search-section">
   <div class="search-box">
-    <input type="text" id="searchInput" placeholder="Search products... mic, stand, light..." autocomplete="off"/>
-    <button onclick="doSearch()">🔍 Search</button>
+    <input type="text" id="searchInput" placeholder="ఉత్పత్తులను వెతకండి... మైక్, స్టాండ్, లైట్, సీరమ్..." autocomplete="off"/>
+    <button onclick="doSearch()" id="searchBtn">🔍 వెతకండి</button>
   </div>
 </div>
 
-<div class="filter-row">
-  <button class="filter-btn active" onclick="filterCat('all', this)">✨ All</button>
-  <button class="filter-btn" onclick="filterCat('mic', this)">🎙️ Microphones</button>
-  <button class="filter-btn" onclick="filterCat('stand', this)">🎚️ Stands</button>
-  <button class="filter-btn" onclick="filterCat('light', this)">💡 Lights</button>
-  <button class="filter-btn" onclick="filterCat('camera', this)">📷 Camera</button>
-  <button class="filter-btn" onclick="filterCat('accessory', this)">🎒 Accessories</button>
+<div class="filter-row" id="filterRow">
+  <button class="filter-btn active" data-cat="all" onclick="filterCat('all', this)">✨ అన్నీ (All)</button>
+  <button class="filter-btn" data-cat="mic" onclick="filterCat('mic', this)">🎙️ మైక్రోఫోన్లు (Mics)</button>
+  <button class="filter-btn" data-cat="stand" onclick="filterCat('stand', this)">🎚️ స్టాండ్లు (Stands)</button>
+  <button class="filter-btn" data-cat="light" onclick="filterCat('light', this)">💡 లైట్లు (Lights)</button>
+  <button class="filter-btn" data-cat="camera" onclick="filterCat('camera', this)">📷 కెమెరా (Camera)</button>
+  <button class="filter-btn" data-cat="beauty" onclick="filterCat('beauty', this)">✨ స్కిన్‌కేర్ (Beauty)</button>
+  <button class="filter-btn" data-cat="accessory" onclick="filterCat('accessory', this)">🎒 ఉపకరణాలు (Accessories)</button>
 </div>
 
 <main>
   <div class="grid" id="grid">
     <div class="state-box">
       <div class="spinner"></div>
-      <p>Loading products...</p>
+      <p id="loadingMsg">ఉత్పత్తులు లోడ్ అవుతున్నాయి...</p>
     </div>
   </div>
 </main>
 
 <footer>
-  <div class="footer-brand">MadhuVenke Moments</div>
+  <div class="footer-brand notranslate" translate="no">MadhuVenke Moments</div>
   <div class="divider"></div>
-  <p style="color:#64748b;font-size:0.86rem;">Follow our journey! 📲</p>
+  <p id="footerFollow" style="color:#64748b;font-size:0.86rem;">మా సోషల్ మీడియాలో కలవండి! 📲</p>
   <div class="social-row">
     <a class="soc yt" href="https://www.youtube.com/@MadhuVenkeMoments" target="_blank" rel="noopener">▶ YouTube</a>
     <a class="soc ig" href="https://www.instagram.com/madhuvenke" target="_blank" rel="noopener">📸 Instagram</a>
@@ -591,41 +718,227 @@
     <a class="soc tg" href="https://t.me/madhuvenkedeals" target="_blank" rel="noopener">✈️ Telegram Deals</a>
     <a class="soc wa" href="https://whatsapp.com/channel/0029Vb9EERsHFxOsnGsEI71r" target="_blank" rel="noopener">💬 WhatsApp Deals</a>
   </div>
-  <p class="footer-note">
-    ⚡ Affiliate links — buying through them supports our channel at no extra cost to you! 🙏<br>
-    అఫిలియేట్ లింక్‌ల ద్వారా కొనడం చానెల్‌కు సహాయపడుతుంది — ధన్యవాదాలు! 💕<br><br>
-    © 2024 <a href="https://www.youtube.com/@MadhuVenkeMoments">MadhuVenke Moments</a>
+  <p class="footer-note" id="footerNote">
+    ⚡ అఫిలియేట్ లింక్‌ల ద్వారా కొనడం చానెల్‌కు సహాయపడుతుంది — మీకు ఎటువంటి అదనపు ఖర్చు ఉండదు! ధన్యవాదాలు 🙏❤️<br>
+    © 2026 <a href="https://www.youtube.com/@MadhuVenkeMoments" class="notranslate" translate="no">MadhuVenke Moments</a>
   </p>
 </footer>
 
 <script>
 /* ════════════════════════════════════════════════════════════
-   PASTE YOUR GOOGLE SHEET ID BELOW:
-   (Example from URL: docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit)
-   The ID is the long string between /d/ and /edit
+   GOOGLE SHEET CONFIGURATION
 ════════════════════════════════════════════════════════════ */
 const GOOGLE_SHEET_ID = "16YqRpLkRMHdr5w3FuQLtU4mSQZ9gyAtysI--BsRof3Q";
 
 let allProducts = [];
 let currentCat  = 'all';
 let currentQ    = '';
+let currentLang = localStorage.getItem('mv_lang') || 'te'; // default to Telugu as requested
 
-const catLabel = {
-  mic:       '🎙️ Microphone',
-  stand:     '🎚️ Stand',
-  light:     '💡 Light',
-  camera:    '📷 Camera',
-  accessory: '🎒 Accessory'
+/* ════════════════════════════════════════════════════════════
+   TRANSLATION DICTIONARY (Telugu & English)
+════════════════════════════════════════════════════════════ */
+const i18n = {
+  en: {
+    htmlLang: 'en',
+    topMsg: '✨ Official Community Store — 100% Genuine Affiliate Deals',
+    headerTagline: 'Products We Personally Use & Trust — Shop Safely With 100% Confidence! 🛡️✨',
+    verifiedBadge: '🛍️ Verified Recommendations',
+    trust1: '🔒 100% Genuine Stores',
+    trust2: '🛡️ Personally Tested & Loved',
+    trust3: '🤝 Your Trust, Our Priority',
+    dealsAlert: '⚡ DAILY 50%–80% OFF LOOT DEALS & OFFERS',
+    tgSub: 'Flash sales, price drops & loots',
+    tgBtn: 'Join Free ➔',
+    waSub: 'Top curated deals on your WhatsApp',
+    waBtn: 'Join Free ➔',
+    searchPlaceholder: 'Search products... mic, stand, light, serum...',
+    searchBtn: '🔍 Search',
+    loading: 'Loading products...',
+    noResult: 'No products found matching',
+    noResultHint: 'Try searching: mic, stand, light, sunscreen, serum',
+    emptyTitle: 'Products coming soon!',
+    emptySub: 'We are curating more tested products for you. Stay tuned!',
+    benefitsTitle: '💡 Benefits We Found',
+    benefitsSub: 'Honest Review',
+    footerFollow: 'Follow our journey! 📲',
+    footerNote: '⚡ Affiliate links — buying through them supports our channel at no extra cost to you! Thank you 🙏❤️<br>© 2026 <a href="https://www.youtube.com/@MadhuVenkeMoments" class="notranslate" translate="no">MadhuVenke Moments</a>',
+    cats: {
+      all: '✨ All',
+      mic: '🎙️ Microphones',
+      stand: '🎚️ Stands',
+      light: '💡 Lights',
+      camera: '📷 Camera',
+      beauty: '✨ Skincare & Beauty',
+      accessory: '🎒 Accessories'
+    }
+  },
+  te: {
+    htmlLang: 'te',
+    topMsg: '✨ అఫీషియల్ కమ్యూనిటీ స్టోర్ — 100% అసలైన అఫిలియేట్ డీల్స్',
+    headerTagline: 'మేము స్వయంగా వాడి నచ్చిన నాణ్యమైన ఉత్పత్తులు — పూర్తి నమ్మకంతో కొనండి! 🛡️✨',
+    verifiedBadge: '🛍️ వెరిఫైడ్ రికమండేషన్స్',
+    trust1: '🔒 100% అసలైన స్టోర్స్',
+    trust2: '🛡️ స్వయంగా పరీక్షించి నచ్చినవి',
+    trust3: '🤝 మీ నమ్మకమే మా ప్రాధాన్యత',
+    dealsAlert: '⚡ ప్రతిరోజూ 50%–80% తగ్గింపు లూట్ డీల్స్ & ఆఫర్స్',
+    tgSub: 'ఫ్లాష్ సేల్స్, ప్రైస్ డ్రాప్స్ & లూట్స్',
+    tgBtn: 'చేరండి ➔',
+    waSub: 'మీ వాట్సాప్‌లోనే బెస్ట్ ఆఫర్స్',
+    waBtn: 'చేరండి ➔',
+    searchPlaceholder: 'ఉత్పత్తులను వెతకండి... మైక్, స్టాండ్, లైట్, సీరమ్...',
+    searchBtn: '🔍 వెతకండి',
+    loading: 'ఉత్పత్తులు లోడ్ అవుతున్నాయి...',
+    noResult: 'ఎటువంటి ఉత్పత్తులు కనిపించలేదు',
+    noResultHint: 'మైక్, స్టాండ్, లైట్, సన్‌స్క్రీన్ అని వెతకండి',
+    emptyTitle: 'ఉత్పత్తులు త్వరలో వస్తున్నాయి!',
+    emptySub: 'మేము పరీక్షించిన మరిన్ని ఉత్పత్తులను త్వరలోనే ఇక్కడ అప్‌డేట్ చేస్తాము!',
+    benefitsTitle: '💡 మేము గమనించిన ఉపయోగాలు',
+    benefitsSub: 'మా నిజమైన రివ్యూ',
+    footerFollow: 'మా సోషల్ మీడియాలో కలవండి! 📲',
+    footerNote: '⚡ అఫిలియేట్ లింక్‌ల ద్వారా కొనడం చానెల్‌కు సహాయపడుతుంది — మీకు ఎటువంటి అదనపు ఖర్చు ఉండదు! ధన్యవాదాలు 🙏❤️<br>© 2026 <a href="https://www.youtube.com/@MadhuVenkeMoments" class="notranslate" translate="no">MadhuVenke Moments</a>',
+    cats: {
+      all: '✨ అన్నీ',
+      mic: '🎙️ మైక్రోఫోన్లు',
+      stand: '🎚️ స్టాండ్లు',
+      light: '💡 లైట్లు',
+      camera: '📷 కెమెరా',
+      beauty: '✨ స్కిన్‌కేర్ & బ్యూటీ',
+      accessory: '🎒 ఉపకరణాలు'
+    }
+  }
 };
 
+/* ════════════════════════════════════════════════════════════
+   SMART AFFILIATE STORE / VENDOR DETECTION
+════════════════════════════════════════════════════════════ */
+function detectStore(url) {
+  const u = (url || '').toLowerCase();
+  
+  // 1. Amazon (amzn.to, amazon.in, amazon.com)
+  if (u.includes('amazon.') || u.includes('amzn.to') || u.includes('amzn.in')) {
+    return {
+      store: 'Amazon',
+      btnClass: 'store-amazon',
+      icon: '🛒',
+      enText: 'Buy',
+      teText: 'కొనండి',
+      badgeColor: '#E67A00',
+      badgeBg: '#FFF7ED'
+    };
+  }
+
+  // 2. Flipkart (flipkart.com, fkrt.it, dl.flipkart.com)
+  if (u.includes('flipkart.') || u.includes('fkrt.it')) {
+    return {
+      store: 'Flipkart',
+      btnClass: 'store-flipkart',
+      icon: '🛍️',
+      enText: 'Buy',
+      teText: 'కొనండి',
+      badgeColor: '#2874F0',
+      badgeBg: '#EFF6FF'
+    };
+  }
+
+  // 3. Meesho (meesho.com, meesho.app)
+  if (u.includes('meesho.')) {
+    return {
+      store: 'Meesho',
+      btnClass: 'store-meesho',
+      icon: '🏷️',
+      enText: 'Buy',
+      teText: 'కొనండి',
+      badgeColor: '#F43397',
+      badgeBg: '#FDF2F8'
+    };
+  }
+
+  // 4. Myntra (myntra.com, myntr.it)
+  if (u.includes('myntra.') || u.includes('myntr.it')) {
+    return {
+      store: 'Myntra',
+      btnClass: 'store-myntra',
+      icon: '👗',
+      enText: 'Buy',
+      teText: 'కొనండి',
+      badgeColor: '#FF3F6C',
+      badgeBg: '#FFF1F2'
+    };
+  }
+
+  // 5. EarnKaro links (earnkaro.com, ekaro.in)
+  if (u.includes('earnkaro.') || u.includes('ekaro.in')) {
+    // Check if store name is in the destination query parameter
+    if (u.includes('flipkart')) {
+      return {
+        store: 'Flipkart',
+        btnClass: 'store-flipkart',
+        icon: '🛍️',
+        enText: 'Buy',
+        teText: 'కొనండి',
+        badgeColor: '#2874F0',
+        badgeBg: '#EFF6FF'
+      };
+    }
+    if (u.includes('amazon')) {
+      return {
+        store: 'Amazon',
+        btnClass: 'store-amazon',
+        icon: '🛒',
+        enText: 'Buy',
+        teText: 'కొనండి',
+        badgeColor: '#E67A00',
+        badgeBg: '#FFF7ED'
+      };
+    }
+    if (u.includes('meesho')) {
+      return {
+        store: 'Meesho',
+        btnClass: 'store-meesho',
+        icon: '🏷️',
+        enText: 'Buy',
+        teText: 'కొనండి',
+        badgeColor: '#F43397',
+        badgeBg: '#FDF2F8'
+      };
+    }
+    // Generic EarnKaro Shortlink
+    return {
+      store: 'Deal',
+      btnClass: 'store-deal',
+      icon: '⚡',
+      enText: 'Buy',
+      teText: 'కొనండి',
+      badgeColor: '#059669',
+      badgeBg: '#ECFDF5'
+    };
+  }
+
+  // Fallback Generic Store
+  return {
+    store: 'Store',
+    btnClass: 'store-default',
+    icon: '🛒',
+    enText: 'Buy',
+    teText: 'కొనండి',
+    badgeColor: '#7C3AED',
+    badgeBg: '#FAF5FF'
+  };
+}
+
+/* ════════════════════════════════════════════════════════════
+   CATEGORY NORMALIZER
+════════════════════════════════════════════════════════════ */
 function normalizeCategory(cat) {
   const c = (cat || '').toLowerCase().trim();
   if (c.includes('mic')) return 'mic';
   if (c.includes('stand') || c.includes('tripod')) return 'stand';
   if (c.includes('light')) return 'light';
   if (c.includes('cam')) return 'camera';
+  if (c.includes('beaut') || c.includes('serum') || c.includes('skin') || c.includes('sunscreen')) return 'beauty';
   if (c.includes('acc')) return 'accessory';
-  return c || 'accessory';
+  return 'accessory';
 }
 
 function esc(s) {
@@ -634,16 +947,65 @@ function esc(s) {
 
 const defaultImg = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300' viewBox='0 0 300 300'><rect width='300' height='300' fill='%23faf5ff'/><text x='50%25' y='45%25' dominant-baseline='middle' text-anchor='middle' font-size='48'>🛍️</text><text x='50%25' y='65%25' dominant-baseline='middle' text-anchor='middle' font-size='15' fill='%237C3AED' font-family='sans-serif' font-weight='bold'>MadhuVenke Moments</text></svg>";
 
+/* ════════════════════════════════════════════════════════════
+   LANGUAGE SWITCHER LOGIC
+════════════════════════════════════════════════════════════ */
+function switchLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('mv_lang', lang);
+
+  // 1. Update <html lang="..."> attribute dynamically so Chrome auto-translate doesn't conflict
+  document.documentElement.lang = i18n[lang].htmlLang;
+
+  // 2. Update toggle buttons active state
+  document.getElementById('btnEn').classList.toggle('active', lang === 'en');
+  document.getElementById('btnTe').classList.toggle('active', lang === 'te');
+
+  // 3. Update all static UI elements
+  const t = i18n[lang];
+  document.getElementById('topMsg').innerHTML = `<span>${t.topMsg}</span>`;
+  document.getElementById('headerTagline').innerText = t.headerTagline;
+  document.getElementById('verifiedBadge').innerText = t.verifiedBadge;
+  document.getElementById('trust1').innerText = t.trust1;
+  document.getElementById('trust2').innerText = t.trust2;
+  document.getElementById('trust3').innerText = t.trust3;
+  document.getElementById('dealsAlert').innerText = t.dealsAlert;
+  document.getElementById('tgSub').innerText = t.tgSub;
+  document.getElementById('tgBtn').innerText = t.tgBtn;
+  document.getElementById('waSub').innerText = t.waSub;
+  document.getElementById('waBtn').innerText = t.waBtn;
+  document.getElementById('searchInput').placeholder = t.searchPlaceholder;
+  document.getElementById('searchBtn').innerText = t.searchBtn;
+  document.getElementById('footerFollow').innerText = t.footerFollow;
+  document.getElementById('footerNote').innerHTML = t.footerNote;
+
+  // 4. Update filter buttons text
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    const c = btn.getAttribute('data-cat');
+    if (t.cats[c]) {
+      btn.innerText = t.cats[c];
+    }
+  });
+
+  // 5. Re-render product grid
+  render();
+}
+
+/* ════════════════════════════════════════════════════════════
+   RENDER PRODUCTS GRID
+════════════════════════════════════════════════════════════ */
 function render() {
   const grid = document.getElementById('grid');
+  const t = i18n[currentLang];
   const q = currentQ.toLowerCase().trim();
 
   const list = allProducts.filter(p => {
     const matchCat = currentCat === 'all' || p.category === currentCat;
     const matchQ   = !q
       || p.name.toLowerCase().includes(q)
-      || (p.nameTe || '').includes(q)
+      || (p.nameTe || '').toLowerCase().includes(q)
       || (p.desc || '').toLowerCase().includes(q)
+      || (p.descTe || '').toLowerCase().includes(q)
       || p.category.includes(q);
     return matchCat && matchQ;
   });
@@ -652,8 +1014,8 @@ function render() {
     grid.innerHTML = `
       <div class="state-box">
         <span class="big">🛍️</span>
-        <h3>Products coming soon!</h3>
-        <p>త్వరలో ఉత్పత్తులు వస్తున్నాయి! 🙏</p>
+        <h3>${t.emptyTitle}</h3>
+        <p>${t.emptySub}</p>
       </div>`;
     return;
   }
@@ -662,43 +1024,72 @@ function render() {
     grid.innerHTML = `
       <div class="state-box">
         <span class="big">🔍</span>
-        <h3>No results found for "${esc(q)}"</h3>
-        <p>Try searching: mic, stand, light, camera</p>
+        <h3>${t.noResult} "${esc(q)}"</h3>
+        <p>${t.noResultHint}</p>
       </div>`;
     return;
   }
 
   grid.innerHTML = list.map(p => {
+    const vendor = detectStore(p.link);
     const hasLink = p.link && p.link !== '#';
+    const storeBtnText = currentLang === 'te' ? vendor.teText : vendor.enText;
+
     const buyBtnHtml = hasLink
-      ? `<a class="buy-btn" href="${esc(p.link)}" target="_blank" rel="noopener">
-           🛒 Buy Now <span class="te">కొనండి</span>
+      ? `<a class="buy-btn ${vendor.btnClass}" href="${esc(p.link)}" target="_blank" rel="noopener">
+           <span>${vendor.icon}</span> <span>${esc(storeBtnText)}</span>
          </a>`
-      : `<a class="buy-btn" href="javascript:void(0)" onclick="alert('Link will be updated soon!')">
-           🛒 Buy Now <span class="te">కొనండి</span>
+      : `<a class="buy-btn store-default" href="javascript:void(0)" onclick="alert('Link will be updated soon!')">
+           <span>${vendor.icon}</span> <span>${currentLang === 'te' ? 'త్వరలో లభిస్తుంది' : 'Coming Soon'}</span>
          </a>`;
 
     const displayImg = (p.img && (p.img.startsWith('http://') || p.img.startsWith('https://'))) ? p.img : defaultImg;
 
+    // Title selection: In Telugu mode, prioritize Telugu name if available
+    const productTitle = (currentLang === 'te' && p.nameTe) ? p.nameTe : p.name;
+    const subTitle = (currentLang === 'te' && p.nameTe && p.name !== p.nameTe) ? p.name : (p.nameTe || '');
+
+    // Benefits selection: In Telugu mode, prioritize Telugu benefits if provided
+    const benefitsContent = (currentLang === 'te' && p.descTe) ? p.descTe : p.desc;
+
+    // Format benefits text: if contains commas or newlines, format as bullets
+    let benefitsHtml = '';
+    if (benefitsContent) {
+      const lines = benefitsContent.split(/\r?\n|•|\|/).map(l => l.trim()).filter(l => l.length > 0);
+      if (lines.length > 1) {
+        benefitsHtml = `
+          <ul class="benefits-bullets">
+            ${lines.map(line => `<li><span class="bullet-icon">✓</span> <span>${esc(line)}</span></li>`).join('')}
+          </ul>`;
+      } else {
+        benefitsHtml = `<div class="benefits-content">${esc(benefitsContent)}</div>`;
+      }
+    }
+
     return `
     <div class="card">
+      <div class="store-badge-top notranslate" translate="no" style="color:${vendor.badgeColor}; background:${vendor.badgeBg};">
+        ${esc(vendor.store)}
+      </div>
       <div class="card-img-wrap">
         <img class="card-img" src="${esc(displayImg)}" alt="${esc(p.name)}" loading="lazy"
              onerror="this.onerror=null; this.src='${defaultImg}';"/>
       </div>
       <div class="card-body">
-        <span class="card-cat">${esc(catLabel[p.category] || p.category)}</span>
-        <div class="card-title">${esc(p.name)}</div>
-        ${p.nameTe ? `<div class="card-title-te">${esc(p.nameTe)}</div>` : ''}
-        <div class="card-price">${esc(p.price)}</div>
-        ${p.desc ? `
+        <span class="card-cat">${esc(t.cats[p.category] || p.category)}</span>
+        <div class="card-title notranslate" translate="no">${esc(productTitle)}</div>
+        ${subTitle ? `<div style="font-size:0.8rem; color:#64748b; line-height:1.4;" class="notranslate" translate="no">${esc(subTitle)}</div>` : ''}
+        <div class="card-price notranslate" translate="no">${esc(p.price)}</div>
+        
+        ${benefitsContent ? `
         <div class="card-benefits">
-          <div class="benefits-label">
-            <span>💡 Benefits We Found</span>
-            <span class="te">మా నిజమైన అనుభవం</span>
+          <div class="benefits-header">
+            <span>${t.benefitsTitle}</span>
+            <span class="benefits-badge-verified">✓ ${t.benefitsSub}</span>
           </div>
-          <p class="benefits-text">${esc(p.desc)}</p>
+          ${benefitsHtml}
         </div>` : ''}
+
         ${buyBtnHtml}
       </div>
     </div>
@@ -706,35 +1097,56 @@ function render() {
   }).join('');
 }
 
+/* ════════════════════════════════════════════════════════════
+   GOOGLE SHEETS DATA FETCHING (JSONP / CORS-FREE)
+════════════════════════════════════════════════════════════ */
 window.handleGoogleSheetResponse = function(data) {
   try {
+    const cols = data && data.table && data.table.cols ? data.table.cols : [];
     const rows = data && data.table && data.table.rows ? data.table.rows : [];
+
+    // Dynamically detect column indexes from headers (works whether Telugu Name column is kept or removed!)
+    const findCol = (predicate, fallback) => {
+      const idx = cols.findIndex(c => c && c.label && predicate(c.label.toLowerCase().trim()));
+      return idx !== -1 ? idx : fallback;
+    };
+
+    const nameIdx   = findCol(l => l === 'name' || l === 'product name' || l.includes('product'), 0);
+    const nameTeIdx = findCol(l => l.includes('telugu name') || l.includes('name te') || l.includes('telugu title'), -1);
+    const catIdx    = findCol(l => l.includes('cat'), 1);
+    const priceIdx  = findCol(l => l.includes('price') || l.includes('cost') || l.includes('mrp'), 2);
+    const imgIdx    = findCol(l => l.includes('img') || l.includes('image'), 3);
+    const linkIdx   = findCol(l => l.includes('link') || l.includes('affiliate') || l.includes('url'), 4);
+    const descIdx   = findCol(l => (l.includes('desc') || l.includes('benefit')) && !l.includes('telugu') && !l.includes('te'), 5);
+    const descTeIdx = findCol(l => (l.includes('desc') || l.includes('benefit')) && (l.includes('telugu') || l.includes('te')), -1);
+
     const list = [];
     for (const r of rows) {
       if (!r.c) continue;
       const getVal = (idx) => {
-        if (!r.c[idx]) return '';
+        if (idx === -1 || !r.c || !r.c[idx]) return '';
         const cell = r.c[idx];
         if (cell.f !== undefined && cell.f !== null) return String(cell.f).trim();
         if (cell.v !== undefined && cell.v !== null) return String(cell.v).trim();
         return '';
       };
       
-      const name = getVal(0);
-      const nameTe = getVal(1);
-      const category = normalizeCategory(getVal(2));
-      let price = getVal(3);
+      const name = getVal(nameIdx);
+      const nameTe = (nameTeIdx !== -1) ? getVal(nameTeIdx) : '';
+      const category = normalizeCategory(getVal(catIdx));
+      let price = getVal(priceIdx);
       if (price && !price.startsWith('₹') && !price.toLowerCase().startsWith('rs') && !price.startsWith('$')) {
         price = '₹' + price;
       }
-      const img = getVal(4);
-      const link = getVal(5);
-      const desc = getVal(6);
+      const img = getVal(imgIdx);
+      const link = getVal(linkIdx);
+      const desc = getVal(descIdx);     // English Benefits / Description
+      const descTe = getVal(descTeIdx); // Optional Telugu Benefits / Description
 
-      // Skip empty or header rows
+      // Skip header rows or empty names
       if (!name || name.toLowerCase() === 'name' || name.toLowerCase() === 'product name') continue;
 
-      list.push({ name, nameTe, category, price, img, link, desc });
+      list.push({ name, nameTe, category, price, img, link, desc, descTe });
     }
 
     allProducts = list;
@@ -751,17 +1163,7 @@ window.handleGoogleSheetResponse = function(data) {
 };
 
 function loadFromGoogleSheets() {
-  if (!GOOGLE_SHEET_ID || GOOGLE_SHEET_ID === "PASTE_YOUR_GOOGLE_SHEET_ID_HERE") {
-    document.getElementById('grid').innerHTML = `
-      <div class="state-box">
-        <span class="big">⚙️</span>
-        <h3>Setup Google Sheets</h3>
-        <p>Please paste your Google Sheet ID in index.html to show your products.</p>
-      </div>`;
-    return;
-  }
-
-  // Load via script tag (JSONP) - completely avoids browser CORS restrictions
+  if (!GOOGLE_SHEET_ID) return;
   const script = document.createElement('script');
   script.src = `https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/gviz/tq?tqx=responseHandler:handleGoogleSheetResponse&t=${Date.now()}`;
   script.onerror = function() {
@@ -791,6 +1193,8 @@ document.getElementById('searchInput').addEventListener('keydown', e => {
   if (e.key === 'Enter') doSearch();
 });
 
+// Initialize chosen language on page load
+switchLang(currentLang);
 loadFromGoogleSheets();
 </script>
 </body>
