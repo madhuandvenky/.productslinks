@@ -801,13 +801,12 @@
   <div class="travel-card">
     <div class="travel-header">
       <div class="travel-title-wrap">
-        <span class="travel-icon">📚</span>
+        <span class="travel-icon">📌</span>
         <div>
-          <h3 class="travel-title" id="travelTitle">Free Guides, Plans &amp; Resources</h3>
-          <p class="travel-subtitle" id="travelSub">Download our travel plans, itineraries &amp; free PDF resources</p>
+          <h3 class="travel-title" id="travelTitle">Guides &amp; Useful Links</h3>
+          <p class="travel-subtitle" id="travelSub">Useful links, documents &amp; guides from our videos</p>
         </div>
       </div>
-      <span class="travel-badge" id="travelBadge">FREE PDF 📄</span>
     </div>
     <div class="travel-buttons-grid" id="travelButtonsGrid">
       <!-- Dynamic guide buttons auto-injected here from Google Sheet "guides" -->
@@ -897,10 +896,9 @@ const i18n = {
     benefitsSub: 'Honest Review',
     footerFollow: 'Follow our journey! 📲',
     footerNote: '⚡ Affiliate links — buying through them supports our channel at no extra cost to you! Thank you 🙏❤️<br>© 2026 <a href="https://www.youtube.com/@madhuandvenky" class="notranslate" translate="no">Madhu &amp; Venky</a>',
-    travelTitle: 'Free Guides, Plans & Resources',
-    travelSub: 'Download our travel plans, itineraries & free PDF resources',
-    travelBadge: 'FREE PDF 📄',
-    travelBtn: 'Download ➔',
+    travelTitle: 'Guides & Useful Links',
+    travelSub: 'Useful links, documents & guides from our videos',
+    travelBtn: 'Open ➔',
     cats: {
       all: '✨ All',
       mic: '🎙️ Microphones',
@@ -935,10 +933,9 @@ const i18n = {
     benefitsSub: 'మా నిజమైన రివ్యూ',
     footerFollow: 'మా సోషల్ మీడియాలో కలవండి! 📲',
     footerNote: '⚡ అఫిలియేట్ లింక్‌ల ద్వారా కొనడం చానెల్‌కు సహాయపడుతుంది — మీకు ఎటువంటి అదనపు ఖర్చు ఉండదు! ధన్యవాదాలు 🙏❤️<br>© 2026 <a href="https://www.youtube.com/@madhuandvenky" class="notranslate" translate="no">Madhu &amp; Venky</a>',
-    travelTitle: 'ఉచిత గైడ్స్, ప్లాన్స్ & రిసోర్సెస్ (PDF)',
-    travelSub: 'మా ట్రావెల్ ప్లాన్స్, ఇటినెరరీ & ఉచిత డాక్యుమెంట్స్ డౌన్‌లోడ్ చేసుకోండి',
-    travelBadge: 'ఉచిత PDF 📄',
-    travelBtn: 'డౌన్‌లోడ్ ➔',
+    travelTitle: 'గైడ్స్ & ముఖ్యమైన లింక్స్',
+    travelSub: 'మా వీడియోలలో మేము షేర్ చేసే ముఖ్యమైన లింక్స్ & డాక్యుమెంట్స్',
+    travelBtn: 'ఓపెన్ చేయండి ➔',
     cats: {
       all: '✨ అన్నీ',
       mic: '🎙️ మైక్రోఫోన్లు',
@@ -1121,12 +1118,12 @@ function switchLang(lang) {
   document.getElementById('footerFollow').innerText = t.footerFollow;
   document.getElementById('footerNote').innerHTML = t.footerNote;
 
-  // 3.1 Update Travel Guides section texts
+  // 3.1 Update Guides section texts
   const travelTitleEl = document.getElementById('travelTitle');
   if (travelTitleEl) {
     travelTitleEl.innerText = t.travelTitle;
-    document.getElementById('travelSub').innerText = t.travelSub;
-    document.getElementById('travelBadge').innerText = t.travelBadge;
+    const travelSubEl = document.getElementById('travelSub');
+    if (travelSubEl) travelSubEl.innerText = t.travelSub;
     renderTravelGuides();
   }
 
@@ -1342,10 +1339,13 @@ window.handleTravelGuidesResponse = function(data) {
         return '';
       };
       const name = getVal(nameIdx);
-      const link = getVal(linkIdx);
+      let link = getVal(linkIdx);
 
       // Skip empty or header rows
-      if (!name || name.toLowerCase() === 'name' || !link || !link.startsWith('http')) continue;
+      if (!name || name.toLowerCase() === 'name' || !link || link.toLowerCase() === 'link') continue;
+      if (!link.startsWith('http://') && !link.startsWith('https://')) {
+        link = 'https://' + link;
+      }
 
       // Smart icon detection based on keywords
       let icon = '📄';
@@ -1364,6 +1364,14 @@ window.handleTravelGuidesResponse = function(data) {
         icon = '🍳';
       } else if (nLower.includes('hotel') || nLower.includes('stay') || nLower.includes('resort')) {
         icon = '🏨';
+      } else if (nLower.includes('doc') || nLower.includes('drive') || nLower.includes('sheet') || nLower.includes('excel')) {
+        icon = '📁';
+      } else if (nLower.includes('form') || nLower.includes('apply')) {
+        icon = '📝';
+      } else if (nLower.includes('video') || nLower.includes('youtube') || nLower.includes('vlog')) {
+        icon = '🎬';
+      } else if (nLower.includes('link') || nLower.includes('site') || nLower.includes('web')) {
+        icon = '🔗';
       }
 
       guides.push({ name, link, icon });
