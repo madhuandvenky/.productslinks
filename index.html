@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="te">
+<html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -108,12 +108,13 @@
     }
     .header-logo {
       width: 100%;
-      max-width: clamp(260px, 40vw, 420px);
+      max-width: clamp(340px, 46vw, 520px);
       height: auto;
-      max-height: 130px;
+      max-height: 230px;
       object-fit: contain;
       display: block;
       margin: 0 auto;
+      filter: drop-shadow(0 4px 16px rgba(0,0,0,0.06));
     }
     .tagline {
       margin-top: 8px;
@@ -413,6 +414,11 @@
       font-weight: 700;
       line-height: 1.4;
       color: var(--text);
+    }
+    .card-sub-title {
+      font-size: 0.8rem;
+      color: #64748b;
+      line-height: 1.4;
     }
     .card-price {
       font-size: 1.25rem;
@@ -732,14 +738,118 @@
     }
 
     @media (max-width: 640px) {
-      .travel-hub-wrap { padding: 0 16px; margin-bottom: 16px; }
-      .travel-card { padding: 14px 16px; border-radius: 16px; }
+      .travel-hub-wrap { padding: 0 12px; margin-bottom: 14px; }
+      .travel-card { padding: 12px 14px; border-radius: 16px; }
       .travel-guide-btn { width: 100%; justify-content: space-between; }
       .deals-grid { grid-template-columns: 1fr; gap: 10px; }
-      .grid { grid-template-columns: 1fr; gap: 18px; padding: 0 16px 40px; }
-      .header-logo { max-width: 270px; max-height: 95px; }
+      .header-logo { max-width: 320px; max-height: 155px; }
       .top-utility-bar { justify-content: center; text-align: center; }
       .lang-toggle-wrap { margin-left: 0; }
+
+      /* ── 2x2 Responsive Product Grid on Mobile ── */
+      .grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        padding: 0 10px 40px;
+      }
+      .card {
+        border-radius: 14px;
+      }
+      .card-img-wrap {
+        padding: 10px;
+        aspect-ratio: 1 / 1;
+      }
+      .store-badge-top {
+        top: 6px;
+        right: 6px;
+        font-size: 0.58rem;
+        padding: 2px 7px;
+      }
+      .card-body {
+        padding: 10px 8px 12px;
+        gap: 4px;
+      }
+      .card-cat {
+        font-size: 0.62rem;
+        letter-spacing: 0.6px;
+      }
+      .card-title {
+        font-size: 0.82rem;
+        line-height: 1.3;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        min-height: 2.1em;
+      }
+      .card-sub-title {
+        font-size: 0.7rem;
+        color: #64748b;
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+      .card-price {
+        font-size: 0.98rem;
+        margin: 2px 0 0;
+      }
+      .card-benefits {
+        padding: 6px 7px;
+        margin-top: 2px;
+        gap: 3px;
+        border-radius: 8px;
+        border-left-width: 2.5px;
+      }
+      .benefits-header {
+        font-size: 0.64rem;
+        gap: 3px;
+      }
+      .benefits-badge-verified {
+        font-size: 0.56rem;
+        padding: 1px 4px;
+      }
+      .benefits-content {
+        font-size: 0.7rem;
+        line-height: 1.35;
+      }
+      .benefits-bullets li {
+        font-size: 0.68rem;
+        line-height: 1.3;
+        gap: 4px;
+      }
+      .benefits-bullets li span.bullet-icon {
+        font-size: 0.65rem;
+      }
+      .buy-btn {
+        padding: 9px 6px;
+        font-size: 0.78rem;
+        border-radius: 9px;
+        margin-top: auto;
+        gap: 5px;
+        line-height: 1.2;
+        text-align: center;
+        justify-content: center;
+      }
+      .filter-row {
+        gap: 6px;
+        padding: 10px 8px 20px;
+      }
+      .filter-btn {
+        padding: 6px 13px;
+        font-size: 0.78rem;
+      }
+      .search-section {
+        padding: 16px 10px 6px;
+      }
+      .search-box input {
+        padding: 10px 14px;
+        font-size: 0.88rem;
+      }
+      .search-box button {
+        padding: 10px 18px;
+        font-size: 0.85rem;
+      }
     }
   </style>
 </head>
@@ -751,8 +861,8 @@
     <span>✨ Official Community Store — 100% Genuine Affiliate Deals</span>
   </div>
   <div class="lang-toggle-wrap">
-    <button class="lang-btn" id="btnEn" onclick="switchLang('en')">🇬🇧 English</button>
-    <button class="lang-btn active" id="btnTe" onclick="switchLang('te')">🇮🇳 తెలుగు</button>
+    <button class="lang-btn active" id="btnEn" onclick="switchLang('en')">🇬🇧 English</button>
+    <button class="lang-btn" id="btnTe" onclick="switchLang('te')">🇮🇳 తెలుగు</button>
   </div>
 </div>
 
@@ -761,37 +871,37 @@
     <img src="logo.png" alt="Madhu &amp; Venky" class="header-logo notranslate" translate="no"/>
   </a>
   <p class="tagline" id="headerTagline">
-    మేము స్వయంగా వాడి నచ్చిన నాణ్యమైన ఉత్పత్తులు — పూర్తి నమ్మకంతో కొనండి! 🛡️✨
+    Products We Personally Use &amp; Trust — Shop Safely With 100% Confidence! 🛡️✨
   </p>
-  <span class="badge" id="verifiedBadge">🛍️ వెరిఫైడ్ రికమండేషన్స్</span>
+  <span class="badge" id="verifiedBadge">🛍️ Verified Recommendations</span>
   <div class="trust-bar">
-    <span id="trust1">🔒 100% అసలైన స్టోర్స్</span>
-    <span id="trust2">🛡️ స్వయంగా పరీక్షించి నచ్చినవి</span>
-    <span id="trust3">🤝 మీ నమ్మకమే మా ప్రాధాన్యత</span>
+    <span id="trust1">🔒 100% Genuine Stores</span>
+    <span id="trust2">🛡️ Personally Tested &amp; Loved</span>
+    <span id="trust3">🤝 Your Trust, Our Priority</span>
   </div>
 </header>
 
 <div class="deals-hub-wrap">
   <div class="live-alert-bar">
     <span class="live-dot"></span>
-    <span id="dealsAlert">⚡ ప్రతిరోజూ 50%–80% తగ్గింపు లూట్ డీల్స్ &amp; ఆఫర్స్</span>
+    <span id="dealsAlert">⚡ DAILY 50%–80% OFF LOOT DEALS &amp; OFFERS</span>
   </div>
   <div class="deals-grid">
     <a href="https://t.me/madhuandvenkydeals" target="_blank" rel="noopener" class="deal-card-btn tg">
       <div class="deal-icon">✈️</div>
       <div class="deal-text">
         <strong>Madhu &amp; Venky Deals on Telegram 🔥</strong>
-        <span id="tgSub">ఫ్లాష్ సేల్స్, ప్రైస్ డ్రాప్స్ &amp; లూట్స్</span>
+        <span id="tgSub">Flash sales, price drops &amp; loots</span>
       </div>
-      <span class="deal-pill" id="tgBtn">చేరండి ➔</span>
+      <span class="deal-pill" id="tgBtn">Join Free ➔</span>
     </a>
     <a href="https://whatsapp.com/channel/0029Vb9EERsHFxOsnGsEI71r" target="_blank" rel="noopener" class="deal-card-btn wa">
       <div class="deal-icon">💬</div>
       <div class="deal-text">
         <strong>Madhu &amp; Venky WhatsApp Channel ⚡</strong>
-        <span id="waSub">మీ వాట్సాప్‌లోనే బెస్ట్ ఆఫర్స్</span>
+        <span id="waSub">Top curated deals on your WhatsApp</span>
       </div>
-      <span class="deal-pill" id="waBtn">చేరండి ➔</span>
+      <span class="deal-pill" id="waBtn">Join Free ➔</span>
     </a>
   </div>
 </div>
@@ -816,26 +926,26 @@
 
 <div class="search-section">
   <div class="search-box">
-    <input type="text" id="searchInput" placeholder="ఉత్పత్తులను వెతకండి... మైక్, స్టాండ్, లైట్, సీరమ్..." autocomplete="off"/>
-    <button onclick="doSearch()" id="searchBtn">🔍 వెతకండి</button>
+    <input type="text" id="searchInput" placeholder="Search products... mic, stand, light, serum..." autocomplete="off"/>
+    <button onclick="doSearch()" id="searchBtn">🔍 Search</button>
   </div>
 </div>
 
 <div class="filter-row" id="filterRow">
-  <button class="filter-btn active" data-cat="all" onclick="filterCat('all', this)">✨ అన్నీ (All)</button>
-  <button class="filter-btn" data-cat="mic" onclick="filterCat('mic', this)">🎙️ మైక్రోఫోన్లు (Mics)</button>
-  <button class="filter-btn" data-cat="stand" onclick="filterCat('stand', this)">🎚️ స్టాండ్లు (Stands)</button>
-  <button class="filter-btn" data-cat="light" onclick="filterCat('light', this)">💡 లైట్లు (Lights)</button>
-  <button class="filter-btn" data-cat="camera" onclick="filterCat('camera', this)">📷 కెమెరా (Camera)</button>
-  <button class="filter-btn" data-cat="beauty" onclick="filterCat('beauty', this)">✨ స్కిన్‌కేర్ (Beauty)</button>
-  <button class="filter-btn" data-cat="accessory" onclick="filterCat('accessory', this)">🎒 ఉపకరణాలు (Accessories)</button>
+  <button class="filter-btn active" data-cat="all" onclick="filterCat('all', this)">✨ All</button>
+  <button class="filter-btn" data-cat="mic" onclick="filterCat('mic', this)">🎙️ Microphones</button>
+  <button class="filter-btn" data-cat="stand" onclick="filterCat('stand', this)">🎚️ Stands</button>
+  <button class="filter-btn" data-cat="light" onclick="filterCat('light', this)">💡 Lights</button>
+  <button class="filter-btn" data-cat="camera" onclick="filterCat('camera', this)">📷 Camera</button>
+  <button class="filter-btn" data-cat="beauty" onclick="filterCat('beauty', this)">✨ Skincare &amp; Beauty</button>
+  <button class="filter-btn" data-cat="accessory" onclick="filterCat('accessory', this)">🎒 Accessories</button>
 </div>
 
 <main>
   <div class="grid" id="grid">
     <div class="state-box">
       <div class="spinner"></div>
-      <p id="loadingMsg">ఉత్పత్తులు లోడ్ అవుతున్నాయి...</p>
+      <p id="loadingMsg">Loading products...</p>
     </div>
   </div>
 </main>
@@ -866,7 +976,7 @@ const GOOGLE_SHEET_ID = "16YqRpLkRMHdr5w3FuQLtU4mSQZ9gyAtysI--BsRof3Q";
 let allProducts = [];
 let currentCat  = 'all';
 let currentQ    = '';
-let currentLang = localStorage.getItem('mv_lang') || 'te'; // default to Telugu as requested
+let currentLang = localStorage.getItem('mv_lang_pref') || 'en'; // default to English
 
 /* ════════════════════════════════════════════════════════════
    TRANSLATION DICTIONARY (Telugu & English)
@@ -1091,6 +1201,7 @@ const defaultImg = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/s
 ════════════════════════════════════════════════════════════ */
 function switchLang(lang) {
   currentLang = lang;
+  localStorage.setItem('mv_lang_pref', lang);
   localStorage.setItem('mv_lang', lang);
 
   // 1. Update <html lang="..."> attribute dynamically so Chrome auto-translate doesn't conflict
@@ -1226,7 +1337,7 @@ function render() {
       <div class="card-body">
         <span class="card-cat">${esc(t.cats[p.category] || p.category)}</span>
         <div class="card-title notranslate" translate="no">${esc(productTitle)}</div>
-        ${subTitle ? `<div style="font-size:0.8rem; color:#64748b; line-height:1.4;" class="notranslate" translate="no">${esc(subTitle)}</div>` : ''}
+        ${subTitle ? `<div class="card-sub-title notranslate" translate="no">${esc(subTitle)}</div>` : ''}
         <div class="card-price notranslate" translate="no">${esc(p.price)}</div>
         
         ${benefitsContent ? `
