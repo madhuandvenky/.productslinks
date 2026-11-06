@@ -1,8 +1,9 @@
-# 🎬 MadhuVenke Moments – Products Page
+# 🎬 Madhu & Venky – Products Page
 
-> Official affiliate products page for the **MadhuVenke Moments** YouTube channel
+> Official affiliate products page for the **Madhu & Venky** YouTube channel
 
-[![Channel](https://img.shields.io/badge/YouTube-MadhuVenkeMoments-red?logo=youtube)](https://www.youtube.com/@MadhuVenkeMoments)
+[![Channel](https://img.shields.io/badge/YouTube-MadhuAndVenky-red?logo=youtube)](https://www.youtube.com/@madhuandvenky)
+[![GitHub](https://img.shields.io/badge/GitHub-madhuandvenky-black?logo=github)](https://github.com/madhuandvenky)
 
 ---
 
@@ -18,7 +19,7 @@ Browse and search all the gear & products we personally use and recommend — mi
 
 ---
 
-## 👫 About MadhuVenke Moments
+## 👫 About Madhu & Venky
 
 We are **Madhu & Venky** — a real couple creating fun, funny, and heartwarming content!
 
@@ -30,7 +31,8 @@ We are **Madhu & Venky** — a real couple creating fun, funny, and heartwarming
 | ✈️ Travel Vlogs | Couple adventures & experiences |
 | 💃 Dance Challenges | Fun couple performances |
 
-📺 **Subscribe:** [youtube.com/@MadhuVenkeMoments](https://www.youtube.com/@MadhuVenkeMoments)
+📺 **Subscribe:** [youtube.com/@madhuandvenky](https://www.youtube.com/@madhuandvenky)  
+🌐 **GitHub Profile:** [github.com/madhuandvenky](https://github.com/madhuandvenky)
 
 ---
 
